@@ -1,0 +1,15 @@
+{
+    "name": "lapurd/lapurd",
+    "type": "library",
+    "version": "1.0.0",
+    "require": {
+        "php": ">=5.4"
+    },
+    "keywords": ["Lapurd"],
+    "autoload": {
+        "psr-4": {
+            "Lapurd\\": "library/"
+        }
+    },
+    "description": "A simple Drupal-like PHP framework."
+}

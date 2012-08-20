@@ -9,6 +9,10 @@
  * @package    Lapurd
  */
 
+if (file_exists($autoload = 'vendor/autoload.php')) {
+    require($autoload);
+}
+
 require_once __DIR__ . '/bootstrap.php';
 
 $lapurd = \Lapurd\Core::get();
