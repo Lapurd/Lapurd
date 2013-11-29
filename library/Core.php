@@ -103,8 +103,13 @@ class Core
      *
      * @return Core
      */
-    public static function get()
+    public static function get($new=false)
     {
+        if ($new)
+        {
+            self::$obj = null;
+        }
+
         if (empty(self::$obj)) {
             self::$obj = new Core();
         }
