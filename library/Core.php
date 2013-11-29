@@ -359,12 +359,14 @@ class Core
     {
         switch ($type) {
             case 'lapurd':
+                $refl = new \ReflectionClass(__NAMESPACE__ . '\\Lapurd');
+
                 return array(
                     'name' => __NAMESPACE__,
                     'type' => 'lapurd',
                     'class' => __NAMESPACE__ . '\\Lapurd',
                     'include' => 'lapurd.inc.php',
-                    'filepath' => SYSROOT,
+                    'filepath' => dirname($refl->getFileName()),
                     'namespace' => __NAMESPACE__ . '\\Lapurd',
                 );
                 break;
