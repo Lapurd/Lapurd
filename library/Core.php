@@ -340,6 +340,7 @@ class Core
      *       'name' => '', // name of the component
      *       'type' => '', // type of the component
      *       'class' => '', // main class of the component
+     *       'include' => '', // place for component hooks
      *       'filepath' => '', // file path to the component
      *       'namespace' => '', // namespace of the component
      *   ]
@@ -362,6 +363,7 @@ class Core
                     'name' => __NAMESPACE__,
                     'type' => 'lapurd',
                     'class' => __NAMESPACE__ . '\\Lapurd',
+                    'include' => 'lapurd.inc.php',
                     'filepath' => SYSROOT,
                     'namespace' => __NAMESPACE__ . '\\Lapurd',
                 );
@@ -373,6 +375,7 @@ class Core
                     'name' => $name,
                     'type' => 'module',
                     'class' => __NAMESPACE__ . '\\Module\\' . $name,
+                    'include' => 'module.inc.php',
                     'filepath' => dirname($refl->getFileName()),
                     'namespace' => __NAMESPACE__ . '\\Module\\' . $name,
                 );
@@ -384,6 +387,7 @@ class Core
                     'name' => $name,
                     'type' => 'application',
                     'class' => __NAMESPACE__ . '\\Application\\' . $name,
+                    'include' => 'application.inc.php',
                     'filepath' => dirname($refl->getFileName()),
                     'namespace' => __NAMESPACE__ . '\\Application\\' . $name,
                 );
@@ -407,23 +411,7 @@ class Core
      */
     private static function loadComponent($component)
     {
-        $type = $component['type'];
-        $path = $component['filepath'];
-
-        switch ($type) {
-            case 'core':
-                $file = $path . '/lapurd.inc.php';
-                break;
-            case 'module':
-                $file = $path . '/module.inc.php';
-                break;
-            case 'application':
-                $file = $path . '/application.inc.php';
-                break;
-            default:
-                throw new \DomainException("Unknown component type '$type'!");
-                break;
-        }
+        $file = $component['filepath'] . '/' . $component['include'];
 
         if (file_exists($file)) {
             require_once $file;
