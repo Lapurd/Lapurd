@@ -6,4 +6,15 @@
             <directory>./_tests/</directory>
         </testsuite>
     </testsuites>
+
+    <logging>
+        <log type="coverage-html" target="_tests/coverage" charset="UTF-8" />
+    </logging>
+
+    <filter>
+        <blacklist>
+            <file>vfs://</file>
+            <directory>./vendor</directory>
+        </blacklist>
+    </filter>
 </phpunit>
