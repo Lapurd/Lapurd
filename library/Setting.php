@@ -31,7 +31,7 @@ class Setting
     public function __construct()
     {
         if (file_exists($include = SYSROOT . '/settings.php')) {
-            require_once($include);
+            require($include);
         } else {
             throw new \LogicException("No 'settings.php' is found!");
         }
