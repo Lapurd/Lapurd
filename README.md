@@ -1,6 +1,8 @@
 Lapurd
 ======
 
+[![Build Status](https://api.travis-ci.org/Lapurd/Lapurd.png)](https://travis-ci.org/Lapurd/Lapurd)
+
 Lapurd is a reverse spelling of 'Drupal'!
 
 It is PHP framework with Drupal-like modular system, which borrows a lot
