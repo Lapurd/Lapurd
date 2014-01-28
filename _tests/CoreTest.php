@@ -54,11 +54,9 @@ class CoreTest extends \PHPUnit_Framework_TestCase
 
     private function runLapurd(Helper\LapurdVfs $vfs)
     {
-        require_once $vfs->getLapurd()->getChild('bootstrap.php')->url();
+        $_SERVER['SCRIPT_FILENAME'] = vfsStream::url('root/');
 
-        $lapurd = \Lapurd\Core::get(true);
-
-        $lapurd->run();
+        require $vfs->getLapurd()->getChild('index.php')->url();
     }
 
     public function getLapurdSetups()
