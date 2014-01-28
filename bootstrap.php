@@ -14,12 +14,21 @@ namespace Lapurd;
 /**
  * Directory of the web root
  */
-DEFINE(__NAMESPACE__ . '\\SYSROOT', __DIR__);
+DEFINE(__NAMESPACE__ . '\\SYSROOT', dirname($_SERVER['SCRIPT_FILENAME']));
+
+/**
+ * Directory of the Lapurd root
+ */
+DEFINE(__NAMESPACE__ . '\\LPDROOT', __DIR__);
 
 /**
  * Directory of the application root
  */
-DEFINE(__NAMESPACE__ . '\\APPROOT', __DIR__ . '/application');
+if (SYSROOT == LPDROOT) {
+    DEFINE(__NAMESPACE__ . '\\APPROOT', SYSROOT . '/application');
+} else {
+    DEFINE(__NAMESPACE__ . '\\APPROOT', SYSROOT);
+}
 
 /**
  * Autoloader for Lapurd library

@@ -169,7 +169,7 @@ class Core
         switch ($type) {
             case 'module':
                 if (file_exists($file = APPROOT . '/modules/' . $name . '/' . $name . '.php') ||
-                    file_exists($file = SYSROOT . '/modules/' . $name . '/' . $name . '.php')
+                    file_exists($file = LPDROOT . '/modules/' . $name . '/' . $name . '.php')
                 ) {
                     require_once $file;
                 }
