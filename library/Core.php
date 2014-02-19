@@ -11,6 +11,8 @@
 
 namespace Lapurd;
 
+use Lapurd\Exception\Http as HttpException;
+
 /**
  * Core class
  *
@@ -133,6 +135,9 @@ class Core
             $this->bootstrap();
 
             $this->router->run();
+        } catch (HttpException $e) {
+            $e->sendHeader();
+            $e->showErrorPage();
         } catch (\RuntimeException $e) {
             print '<pre>' . $e . '</pre>';
         }

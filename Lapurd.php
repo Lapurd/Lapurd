@@ -25,14 +25,4 @@ final class Lapurd extends Component
     {
         echo "<h1>Hello World!</h1>";
     }
-
-    /**
-     * Handler if no other handler can be found
-     */
-    public function handlePageNotFound()
-    {
-        header('HTTP/1.0 404 Not Found');
-        echo "<h1>404 Page Not Found</h1>";
-        echo "The page you requested can not be found.";
-    }
 }

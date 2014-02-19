@@ -11,6 +11,8 @@
 
 namespace Lapurd;
 
+use Lapurd\Exception\Http\PageNotFound as PageNotFoundException;
+
 /**
  * Class Router
  *
@@ -68,16 +70,15 @@ class Router
 
     /**
      * Init the router and find the handler
+     *
+     * @throws Exception\Http\PageNotFound
      */
     private function init()
     {
         $router = URLPath::getPath($this->path);
 
         if (!isset($router)) {
-            $router = array(
-                'provider' => Core::getComponent('lapurd'),
-                'callback' => 'template_page_not_found',
-            );
+            throw new PageNotFoundException();
         }
 
         $this->router = $router;
