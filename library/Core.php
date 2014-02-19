@@ -36,6 +36,13 @@ class Core
     private $path;
 
     /**
+     * The instance of 'Router'
+     *
+     * @var Router
+     */
+    private $router;
+
+    /**
      * The instance of 'Lapurd'
      *
      * @var Lapurd
@@ -125,10 +132,8 @@ class Core
         try {
             $this->bootstrap();
 
-            $router = $this->getRouter();
-
-            call_user_func(array(self::initComponent($router['provider']), $router['callback']));
-        } catch (\RuntimeException  $e) {
+            $this->router->run();
+        } catch (\RuntimeException $e) {
             print '<pre>' . $e . '</pre>';
         }
     }
@@ -197,6 +202,9 @@ class Core
         URLPath::build();
 
         $this->path = $this->getPath();
+
+        $this->router = new Router($this->path);
+
     }
 
     /**
@@ -233,26 +241,6 @@ class Core
     }
 
     /**
-     * Get the router that handles current URL path
-     *
-     * @return array
-     *   An array contains the router information
-     */
-    private function getRouter()
-    {
-        $router = URLPath::getPath($this->path);
-
-        if (!isset($router)) {
-            $router = array(
-                'provider' => Core::getComponent('lapurd'),
-                'callback' => 'handlePageNotFound',
-            );
-        }
-
-        return $router;
-    }
-
-    /**
      * Get the instance of a requested module
      *
      * @param string $module
@@ -278,6 +266,14 @@ class Core
     public function getLapurd()
     {
         return $this->lapurd;
+    }
+
+    /**
+     * @return array
+     */
+    public function getRouter()
+    {
+        return $this->router->get();
     }
 
     /**
