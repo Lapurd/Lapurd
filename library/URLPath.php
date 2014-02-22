@@ -36,7 +36,7 @@ class URLPath
         foreach (Core::get()->getEnabledModules() as $module) {
             $providers[] = Core::getComponent('module', $module);
         }
-        $providers[] = Core::getComponent('application', Core::get()->getCurrentApplication());
+        $providers[] = Core::getComponent('application');
 
         foreach ($providers as $provider) {
             if (is_callable($callback = $provider['namespace'] . '\\paths')) {

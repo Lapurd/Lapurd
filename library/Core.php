@@ -92,7 +92,7 @@ class Core
         /**
          * Init Application
          */
-        $this->application = self::newComponent('application', $this->getCurrentApplication());
+        $this->application = self::newComponent('application');
 
         /**
          * Init Modules
@@ -389,6 +389,10 @@ class Core
                 );
                 break;
             case 'application':
+                if (is_null($name)) {
+                    $name = self::get()->getCurrentApplication();
+                }
+
                 $refl = new \ReflectionClass(__NAMESPACE__ . '\\Application\\' . $name);
 
                 return array(
