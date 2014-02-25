@@ -77,7 +77,7 @@ class URLPath
      *   An array of the path information
      *
      *       [
-     *           'callback' => '',
+     *           'callback' => '', // callable
      *       ]
      */
     public static function addPath($path, $info)

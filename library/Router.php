@@ -95,6 +95,10 @@ class Router
      */
     public static function call($callable)
     {
-        call_user_func(array(Core::initComponent($callable['provider']), $callable['callback']));
+        if (!isset($callable['callback']) || !is_callable($callback = array(Core::initComponent($callable['provider']), $callable['callback']))) {
+            throw new \BadMethodCallException("Invalid callback '" . $callable['callback'] . "'!");
+        }
+
+        call_user_func($callback);
     }
 }
