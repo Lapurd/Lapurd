@@ -144,6 +144,158 @@ class Core
     }
 
     /**
+     * Check if a component implements a hook
+     *
+     * @param string $hook
+     *   The name of the hook
+     * @param array $component
+     *   A component to check
+     * @param null $callback
+     *   A normalized callback from is_callable
+     *
+     * @return bool
+     *   true if the hook is implemented in that component
+     *
+     * @throws \LogicException
+     */
+    public static function hook($hook, array $component, &$callback = null)
+    {
+        if (!isset($component['namespace'])) {
+            throw new \LogicException("Invalid component!");
+        }
+
+        return is_callable($component['namespace'] . '\\' . $hook, false, $callback);
+    }
+
+    /**
+     * Invoke a hook in a particular component
+     *
+     * @param string $hook
+     *   The name of the hook
+     * @param array $component
+     *   A component that implements the hook
+     * @param array $argument
+     *   Arguments to be passed to the hook implementation
+     * @param callable $callback
+     *   A callback to apply on the hook implementation result
+     *
+     * @return mixed
+     *   The return value of the hook implementation, or the result of the
+     *   callback that has been applied on the hook implementation result.
+     */
+    public static function invoke($hook, array $component, array $argument=array(), callable $callback=null)
+    {
+        if (self::hook($hook, $component, $func)) {
+            $result = call_user_func_array($func, $argument);
+
+            if (is_callable($callback)) {
+                return call_user_func_array($callback, array($result, $component));
+            } else {
+                return $result;
+            }
+        }
+    }
+
+    /**
+     * Get all the components that implements a hook
+     *
+     * @param string $hook
+     *   The name of the hook
+     * @param bool $refresh
+     *   Whether to force the stored list of hookers to be
+     *   regenerated. (for internal use only)
+     *
+     * @return array
+     *   An hook implementation info array
+     *
+     *       [
+     *           'hook' => '', // the hook this component implements
+     *           'callback' => '', // a normalized callback from is_callable
+     *           'provider' => [], // the component provides the hook
+     *       ]
+     */
+    public static function hookers($hook, $refresh = false)
+    {
+        static $hookers;
+
+        if ($refresh) {
+            $hookers = array();
+        }
+
+        if (!isset($hookers[$hook])) {
+            $hookers[$hook] = array();
+            if (self::hook($hook, $component = self::getComponent('core'), $func)) {
+                $hookers[$hook][] = array(
+                    'hook' => $hook,
+                    'callback' => $func,
+                    'provider' => $component,
+                );
+            }
+            foreach (self::get()->getEnabledModules() as $module) {
+                if (self::hook($hook, $component = self::getComponent('module', $module), $func)) {
+                    $hookers[$hook][] = array(
+                        'hook' => $hook,
+                        'callback' => $func,
+                        'provider' => $component,
+                    );
+                }
+            }
+            if (self::hook($hook, $component = self::getComponent('application', self::get()->getSetting('application')), $func)) {
+                $hookers[$hook][] = array(
+                    'hook' => $hook,
+                    'callback' => $func,
+                    'provider' => $component,
+                );
+            }
+        }
+
+        // The explicit cast forces a copy to be made. This is needed because
+        // $hookers[$hook] is only a reference to an element of
+        // $hookers and if there are nested foreaches, they would both
+        // manipulate the same array's references, which causes some implementation
+        // components' hooks not to be called.
+        // See also http://www.zend.com/zend/art/ref-count.php.
+        return (array) $hookers[$hook];
+    }
+
+    /**
+     * Invoke a hook in all available components that implement it
+     *
+     * @param string $hook
+     *   The name of the hook
+     * @param array $argument
+     *   Arguments to be passed to the hook implementation
+     * @param callable $callback
+     *   A callback to apply on the hook implementation result
+     *
+     * @return mixed
+     *   An array of the results of the hookers or the callback
+     *   that has been applied on the hook implementation result.
+     *
+     *   If the results are arrays, they will be merged into one array.
+     */
+    public static function invokeAll($hook, array $argument=array(), callable $callback=null)
+    {
+        $return = array();
+
+        foreach (self::hookers($hook) as $hooker) {
+            $result = call_user_func_array($hooker['callback'], $argument);
+
+            if (is_callable($callback)) {
+                $result = call_user_func_array($callback, array($result, $hooker['provider']));
+            }
+
+            if (is_array($result)) {
+                $return = array_merge_recursive($return, $result);
+            } else {
+                $return[] = $result;
+            }
+        }
+
+        return $return;
+    }
+
+    /**
      * Autoloader for system components
      *
      * @param $class

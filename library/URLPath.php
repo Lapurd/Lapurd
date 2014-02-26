@@ -33,21 +33,11 @@ class URLPath
      */
     public static function build()
     {
-        foreach (Core::get()->getEnabledModules() as $module) {
-            $providers[] = Core::getComponent('module', $module);
-        }
-        $providers[] = Core::getComponent('application');
-
-        foreach ($providers as $provider) {
-            if (is_callable($callback = $provider['namespace'] . '\\paths')) {
-                $paths = call_user_func($callback);
-
-                foreach ($paths as $path => $info) {
-                    $info['provider'] = $provider;
-                    URLPath::addPath($path, $info);
-                }
+        Core::invokeAll('paths', array(), function ($paths, $provider) {
+            foreach ($paths as $path => $info) {
+                self::addPath($path, $info, $provider);
             }
-        }
+        });
     }
 
     /**
@@ -79,9 +69,13 @@ class URLPath
      *       [
      *           'callback' => '', // callable
      *       ]
+     * @param array $provider
+     *   A component provider
      */
-    public static function addPath($path, array $info)
+    public static function addPath($path, array $info, array $provider)
     {
+        $info['provider'] = $provider;
+
         self::$paths[$path] = $info;
     }
 }
