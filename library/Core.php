@@ -66,6 +66,13 @@ class Core
     private $modules = array();
 
     /**
+     * An array of runtime variables
+     *
+     * @var array
+     */
+    private $variables = array();
+
+    /**
      * The instance of the 'Application'
      *
      * @var Component\Application
@@ -469,6 +476,33 @@ class Core
     public function setSetting($name, $value)
     {
         $this->setting->write($name, $value);
+    }
+
+    /**
+     * Get a variable
+     *
+     * @param string $name
+     *   The name of the variable
+     *
+     * @return mixed|null
+     *   The value of the variable
+     */
+    public function getVariable($name)
+    {
+        return isset($this->variables[$name]) ? $this->variables[$name] : null;
+    }
+
+    /**
+     * Set a variable
+     *
+     * @param string $name
+     *   The name of the variable
+     * @param mixed $value
+     *   The value of the variable
+     */
+    public function setVariable($name, $value)
+    {
+        $this->variables[$name] = $value;
     }
 
     /**
