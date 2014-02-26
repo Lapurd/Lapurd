@@ -237,7 +237,7 @@ class Core
         }
 
         if (isset($_REQUEST['q'])) {
-            $path = $_REQUEST['q'];
+            $path = rtrim($_REQUEST['q'], '/');
         } else {
             $path = 'index';
         }
