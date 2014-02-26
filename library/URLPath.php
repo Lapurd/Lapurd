@@ -80,7 +80,7 @@ class URLPath
      *           'callback' => '', // callable
      *       ]
      */
-    public static function addPath($path, $info)
+    public static function addPath($path, array $info)
     {
         self::$paths[$path] = $info;
     }
