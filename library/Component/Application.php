@@ -37,8 +37,8 @@ abstract class Application extends Component
     {
         parent::__construct($info);
 
-        if (is_callable($callback = Core::getComponent('application', Setting::getSetting('application'))['namespace'] . '\\modules')) {
-            Setting::addSetting('modules', call_user_func($callback));
+        if (isset($info['modules'])) {
+            Core::get()->setSetting('modules', $info['modules']);
         }
     }
 }
