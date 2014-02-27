@@ -652,7 +652,7 @@ class Core
      */
     public function getEnabledModules()
     {
-        return $this->getSetting('modules');
+        return (array) $this->getSetting('modules');
     }
 
     /**
