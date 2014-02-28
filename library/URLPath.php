@@ -52,7 +52,27 @@ class URLPath
     public static function getPath($path)
     {
         if (isset(self::$paths[$path])) {
-            return self::$paths[$path];
+            $info = array();
+
+            $candidates = self::$paths[$path];
+            foreach ($candidates as $candidate) {
+                if ($candidate['provider']['type'] == 'application') {
+                    $info = $candidate;
+                    break;
+                } elseif ($candidate['provider']['type'] == 'module') {
+                    if (empty($info)) {
+                        $info = $candidate;
+                    } elseif (isset($candidate['weight'])) {
+                        if (!isset($info['weight']) || $info['weight'] < $candidate['weight']) {
+                            $info = $candidate;
+                        }
+                    }
+                } else {
+                    throw new \LogicException("Unsupported component type '" . $candidate['provider']['type'] ."'!");
+                }
+            }
+
+            return $info;
         } else {
             return null;
         }
@@ -67,6 +87,7 @@ class URLPath
      *   An array of the path information
      *
      *       [
+     *           'weight' => '', // int
      *           'callback' => '', // callable
      *       ]
      * @param array $provider
@@ -76,6 +97,6 @@ class URLPath
     {
         $info['provider'] = $provider;
 
-        self::$paths[$path] = $info;
+        self::$paths[$path][$provider['namespace']] = $info;
     }
 }
