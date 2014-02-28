@@ -30,7 +30,7 @@ class Setting
      */
     public function __construct()
     {
-        if (file_exists($include = SYSROOT . '/settings.php')) {
+        if (file_exists($include = self::getConfPath() . '/settings.php')) {
             require($include);
         } else {
             throw new \LogicException("No 'settings.php' is found!");
@@ -111,5 +111,68 @@ class Setting
     public function write($name, $value)
     {
         self::$settings[$name] = $value;
+    }
+
+    /**
+     * Find the appropriate configuration directory.
+     *
+     * Try finding a matching configuration directory by stripping the website's
+     * hostname from left to right and pathname from right to left. The first
+     * configuration file found will be used; the remaining will ignored. If no
+     * configuration file is found, return a default value '$conf_path/default'.
+     *
+     * Example for a fictitious site installed at
+     * http://www.example.domain:8080/site/test/ the 'settings.php' is searched
+     * in the following directories:
+     *
+     *  1. $conf_path/8080.www.example.domain.site.test
+     *  2. $conf_path/www.example.domain.site.test
+     *  3. $conf_path/drupal.org.site.test
+     *  4. $conf_path/org.site.test
+     *
+     *  5. $conf_path/8080.www.example.domain.site
+     *  6. $conf_path/www.example.domain.site
+     *  7. $conf_path/drupal.org.site
+     *  8. $conf_path/org.site
+     *
+     *  9. $conf_path/8080.www.example.domain
+     * 10. $conf_path/www.example.domain
+     * 11. $conf_path/drupal.org
+     * 12. $conf_path/org
+     *
+     * 13. $conf_path/default
+     *
+     * @param bool $reset
+     *   Force a full search for matching directories even if one had been
+     *   found previously.
+     *
+     * @return string
+     *   The path of the matching directory.
+     */
+    public static function getConfPath($reset = false)
+    {
+        static $conf_path = '';
+
+        if ($conf_path && !$reset) {
+            return $conf_path;
+        }
+
+        $path = SYSROOT . '/domains';
+        $server = explode('.', implode('.', array_reverse(explode(':', rtrim($_SERVER['HTTP_HOST'], '.')))));
+        $uri_path = explode('/', $_SERVER['SCRIPT_NAME'] ? $_SERVER['SCRIPT_NAME'] : $_SERVER['SCRIPT_FILENAME']);
+        for ($i = count($uri_path) - 1; $i > 0; $i--) {
+            for ($j = count($server); $j > 0; $j--) {
+                $dir = implode('.', array_slice($server, -$j)) . implode('.', array_slice($uri_path, 0, $i));
+                if (file_exists("$path/$dir/settings.inc.php")) {
+                    $conf_path = "$path/$dir";
+
+                    return $conf_path;
+                }
+            }
+        }
+
+        $conf_path = SYSROOT . '/domains/default';
+
+        return $conf_path;
     }
 }
