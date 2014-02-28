@@ -22,15 +22,6 @@ DEFINE(__NAMESPACE__ . '\\SYSROOT', dirname($_SERVER['SCRIPT_FILENAME']));
 DEFINE(__NAMESPACE__ . '\\LPDROOT', __DIR__);
 
 /**
- * Directory of the application root
- */
-if (SYSROOT == LPDROOT) {
-    DEFINE(__NAMESPACE__ . '\\APPROOT', SYSROOT . '/application');
-} else {
-    DEFINE(__NAMESPACE__ . '\\APPROOT', SYSROOT);
-}
-
-/**
  * Autoloader for Lapurd library
  *
  * @param $class

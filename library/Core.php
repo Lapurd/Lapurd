@@ -97,6 +97,20 @@ class Core
         $this->setting = new Setting();
 
         /**
+         * Directory of the application root
+         */
+        $application = $this->getSetting('application');
+        if (is_dir(SYSROOT . '/applications/' . $application)) {
+            DEFINE(__NAMESPACE__ . '\\APPROOT', SYSROOT . '/applications/' . $application);
+        } else {
+            if (SYSROOT == LPDROOT) {
+                DEFINE(__NAMESPACE__ . '\\APPROOT', SYSROOT . '/application');
+            } else {
+                DEFINE(__NAMESPACE__ . '\\APPROOT', SYSROOT);
+            }
+        }
+
+        /**
          * Init Application
          */
         $this->application = self::newComponent('application');
