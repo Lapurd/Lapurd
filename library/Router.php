@@ -45,7 +45,7 @@ class Router
      */
     public function __construct($path)
     {
-        $this->path = $path;
+        $this->path = new URLPath($path);
         $this->init();
     }
 
@@ -75,7 +75,14 @@ class Router
      */
     private function init()
     {
-        $router = URLPath::getPath($this->path);
+        $ancestors = $this->path->getAncestors();
+
+        foreach ($ancestors as $ancestor) {
+            $router = URLPath::getPath($ancestor);
+            if (is_array($router)) {
+                break;
+            }
+        }
 
         if (!isset($router)) {
             throw new PageNotFoundException();
@@ -99,6 +106,12 @@ class Router
             throw new \BadMethodCallException("Invalid callback '" . $callable['callback'] . "'!");
         }
 
-        call_user_func($callback);
+        if (isset($callable['arguments'])) {
+            $arguments = URLPath::mapParams($callable['arguments'], explode('/', Core::get()->getPath()));
+        } else {
+            $arguments = array();
+        }
+
+        call_user_func_array($callback, $arguments);
     }
 }

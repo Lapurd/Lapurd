@@ -3,8 +3,8 @@ namespace Lapurd\Module;
 
 class Foo extends \Lapurd\Component\Module
 {
-    public function sayFoo()
+    public function say($word)
     {
-        echo 'Foo!';
+        echo "You are saying: '$word'!";
     }
 }

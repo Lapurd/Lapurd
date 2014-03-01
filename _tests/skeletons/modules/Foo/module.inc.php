@@ -5,7 +5,12 @@ function paths()
 {
     return array(
         'foo' => array(
-            'callback' => 'sayFoo',
+            'callback' => 'say',
+            'arguments' => array('Foo')
+        ),
+        'foo/%' => array(
+            'callback' => 'say',
+            'arguments' => array(1),
         ),
     );
 }
