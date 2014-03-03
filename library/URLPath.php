@@ -222,9 +222,6 @@ class URLPath
      * - foo/12345/%
      * - foo/%/bar
      * - foo/%/%
-     * - foo/12345
-     * - foo/%
-     * - foo
      *
      * Where % means that any argument matches that part.
      *
@@ -253,9 +250,6 @@ class URLPath
             if ($i > $endmask) {
                 // Only look at masks that are not longer than the path of interest.
                 continue;
-            } elseif ($i < (1 << $length)) {
-                // We have exhausted the masks of a given length, so decrease the length.
-                --$length;
             }
             $current = '';
             for ($j = $length; $j >= 0; $j--) {
