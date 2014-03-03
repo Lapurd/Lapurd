@@ -22,11 +22,6 @@ namespace Lapurd;
 class URLPath
 {
     /**
-     * Maximum parts a URL path could be split
-     */
-    const MAX_PARTS = 7;
-
-    /**
      * URL path of current instance
      *
      * @var string
@@ -182,8 +177,7 @@ class URLPath
      */
     public static function mask($path)
     {
-        $args = explode('/', $path);
-        $parts = array_slice($args, 0, self::MAX_PARTS);
+        $parts = explode('/', $path);
         $counts = count($parts);
         // We store the highest index of parts here to save some work in the fit
         // calculation loop.
@@ -235,8 +229,7 @@ class URLPath
      */
     public static function ancestors($path)
     {
-        $args = explode('/', $path);
-        $parts = array_slice($args, 0, self::MAX_PARTS);
+        $parts = explode('/', $path);
         $counts = count($parts);
         $length = $counts - 1;
         $endmask = (1 << $counts) - 1;
