@@ -415,6 +415,8 @@ class Core
             $path = 'index';
         }
 
+        $path = URLPath::resolveAlias($path);
+
         return $path;
     }
 

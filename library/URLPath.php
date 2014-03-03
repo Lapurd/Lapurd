@@ -44,6 +44,13 @@ class URLPath
     private static $masks = array();
 
     /**
+     * An array of path aliases
+     *
+     * @var array
+     */
+    private static $aliases = array();
+
+    /**
      * @param $path
      *   A URL path
      */
@@ -299,5 +306,38 @@ class URLPath
         }
 
         return $map;
+    }
+
+    /**
+     * Add an alias to a URL path
+     *
+     * @param string $alias
+     *   A URL path alias
+     * @param string $path
+     *   A URL path
+     */
+    public static function addAlias($alias, $path)
+    {
+        self::$aliases[$alias] = $path;
+    }
+
+    /**
+     * Resolve an alias to the URL path
+     *
+     * If no URL path is found for the alias, then the alias itself
+     * will be returned.
+     *
+     * @param string $alias
+     *   A URL path alias
+     *
+     * @return string
+     */
+    public static function resolveAlias($alias)
+    {
+        if (isset(self::$aliases[$alias])) {
+            return self::$aliases[$alias];
+        } else {
+            return $alias;
+        }
     }
 }
