@@ -104,6 +104,10 @@ class URLPath
                 }
             }
 
+            while (isset($info['redirect'])) {
+                $info = self::getPath($info['redirect']);
+            }
+
             return $info;
         } else {
             return null;
@@ -120,9 +124,12 @@ class URLPath
      *
      *       [
      *           'weight' => '', // int
+     *           'redirect' => '', // string
      *           'callback' => '', // callable
      *           'arguments' => [], // array
      *       ]
+     *
+     *   The 'redirect' element is a URL path on which another router is handling.
      *
      *   The integer in 'arguments' array is corresponding to the position in a
      *   URL path. Suppose the 'arguments' array is [arg1, 2, 3, arg4], and the
