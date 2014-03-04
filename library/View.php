@@ -1,0 +1,252 @@
+<?php
+namespace Lapurd;
+
+/**
+ * Class View
+ *
+ * @package Lapurd
+ *
+ * A View is the very basic themable element in Lapurd, it can be themed by a
+ * template.
+ *
+ * The template can have several names with different priority. Other providers
+ * can add naming schemas to a view, as long as they provide the corresponded
+ * templates. The provider of the view mush have a template named the same,
+ * which will be used if no other template with higher priority is found,
+ * provided in its 'views/' directory.
+ *
+ * Lapurd tries to find a proper template for a view in the 'views/' directory
+ * of the current application first. If none is found, it will fallback to the
+ * template provided by its provider.
+ *
+ */
+class View
+{
+    private $name;
+
+    private static $views = array();
+
+    private $schemas;
+
+    private $template;
+
+    private $provider;
+
+    private $variables = array();
+
+    /**
+     * @param string $name
+     *   The name of a view that is in the views registr
+     */
+    public function __construct($name)
+    {
+        $info = self::getView($name);
+        $this->name = $info['name'];
+        $this->provider = $info['provider'];
+        $this->template = new Template();
+    }
+
+    public static function build()
+    {
+        Core::invokeAll('views', array(), function ($views, $provider) {
+            foreach ($views as $view) {
+                View::addView($view, $provider);
+            }
+        });
+    }
+
+    /**
+     * Get a view from the views registry
+     *
+     * @param string $name
+     *   The name of the view
+     *
+     * @return array|null
+     *   The information array of the view
+     */
+    public static function getView($name)
+    {
+        if (isset(self::$views[$name])) {
+            return self::$views[$name];
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Add a view into the views registry
+     *
+     * @param string $name
+     *   The name of the view
+     * @param array $provider
+     *   A component provider
+     */
+    public static function addView($name, array $provider)
+    {
+        self::$views[$name] = array(
+            'name' => $name,
+            'provider' => $provider,
+        );
+    }
+
+    /**
+     * Theme a view
+     *
+     * @param string $content
+     *   The main content of the view
+     *
+     * @return string
+     *   The HTML result after the theming
+     */
+    public function theme($content)
+    {
+        /**
+         * Prepare templates
+         */
+        $candidates = array();
+        if (isset($this->schemas)) {
+            foreach ($this->schemas as $schema) {
+                $candidates[] = array(
+                    'schema' => $this->name . '--' . $schema['schema'],
+                    'provider' => $schema['provider'],
+                    'template' => array(
+                        'filename' => $this->name . '--' . $schema['schema'] . '.tpl.php',
+                        'providers' => self::getProviders($schema['provider']),
+                    ),
+                );
+            }
+        }
+        $candidates[] = array(
+            'schema' => $this->name,
+            'provider' => $this->provider,
+            'template' => array(
+                'filename' => $this->name . '.tpl.php',
+                'providers' => self::getProviders($this->provider),
+            ),
+        );
+
+        /**
+         * Find a proper template
+         */
+        foreach ($candidates as $candidate) {
+            foreach ($candidate['template']['providers'] as $template_provider) {
+                if (file_exists($template_filepath = $template_provider['filepath'] . '/views/' . $candidate['template']['filename'])) {
+                    $template = $candidate['template'];
+                    $template['provider'] = $template_provider;
+                    $template['filepath'] = $template_filepath;
+                    break 2;
+                }
+            }
+        }
+
+        if (!isset($template)) {
+            throw new \LogicException("No template can be found!");
+        }
+
+        /**
+         * Allow modification before the rendering
+         */
+
+        // Let the provider of the view make modifications.
+        Core::invoke('view_' . str_replace('-', '_', $this->name) . '_render', $this->provider, array($this));
+
+        // The application should be able to modify the view as well.
+        Core::invoke('view_' . str_replace('-', '_', $this->name) . '_render', Core::getComponent('application'), array($this));
+
+        // If the name schema used by the template is not same with the name
+        // of the view, run all the hooks on the new name schema.
+        if ($candidate['schema'] != $this->name) {
+            // Let the provider of the new name schema make modifications.
+            Core::invoke('view_' . str_replace('-', '_', $candidate['schema']) . '_render', $candidate['provider'], array($this));
+
+            // If the new name schema is not provided by the application, then the
+            // application should be able to modify the view as well.
+            if (Core::getComponent('application')['namespace'] != $candidate['provider']['namespace']) {
+                Core::invoke('view_' . str_replace('-', '_', $candidate['schema']) . '_render', Core::getComponent('application'), array($this));
+            }
+        }
+
+        /**
+         * Render the template
+         */
+        $this->setVariable('content', $content);
+        $this->setVariable('base_url', Core::get()->getBaseURL());
+
+        $output = $this->template->render($template['filepath'], $this->variables);
+
+        return $output;
+    }
+
+    /**
+     * Add a template naming schema
+     *
+     * @param string $schema
+     *   A naming schema that the template might use
+     * @param array $provider
+     *   The component provider of this naming schema
+     *
+     *   There must be a template with the following name placed inside the
+     *   'views/' directory of this provider.
+     *
+     *       $this->name . '--' . $schema . '.tpl.php'
+     */
+    public function addSchema($schema, array $provider)
+    {
+        $this->schemas[] = array(
+            'schema' => $schema,
+            'provider' => $provider,
+        );
+    }
+
+    /**
+     * Add a template variable
+     *
+     * @param string $variable
+     *   The name of the template variable
+     * @param mixed $content
+     *   The content of the template variable
+     */
+    public function setVariable($variable, $content)
+    {
+        $this->variables[$variable] = $content;
+    }
+
+    /**
+     * Get a template variable
+     *
+     * @param string $variable
+     *   The name of the template variable
+     *
+     * @return mixed|null
+     *   The content of the template variable
+     */
+    public function getVariable($variable)
+    {
+        if (isset($this->variables[$variable])) {
+            return $this->variables[$variable];
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Get all the possible locations for a template
+     *
+     * @param array $provider
+     *   A component provider
+     *
+     * @return array
+     */
+    private static function getProviders(array $provider)
+    {
+        $providers = array();
+        // 'views' directory of the application
+        $providers[] = Core::getComponent('application');
+        // 'views' directory of the view's provider
+        if ($provider['namespace'] != Core::getComponent('application')['namespace']) {
+            $providers[] = $provider;
+        }
+
+        return $providers;
+    }
+}

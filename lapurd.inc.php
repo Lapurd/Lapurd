@@ -21,6 +21,41 @@ function paths()
     return array(
         'index' => array(
             'callback' => 'sayHelloWorld',
+            'page-title' => 'Hello World',
         ),
     );
+}
+
+/**
+ * System's 'views' hook
+ *
+ * @return array
+ */
+function views()
+{
+    return array(
+        /**
+         * The core 'page' view.
+         */
+        'page',
+    );
+}
+
+/**
+ * System's 'view_hook_render' hook on 'page' view
+ *
+ * @param View $view
+ *   A View object
+ */
+function view_page_render(View $view)
+{
+    // website page title
+    if (!$view->getVariable('page_title')) {
+        $router = Core::get()->getRouter();
+        if (isset($router['page-title'])) {
+            $view->setVariable('page_title', $router['page-title']);
+        } else {
+            $view->setVariable('page_title', 'Hello World');
+        }
+    }
 }

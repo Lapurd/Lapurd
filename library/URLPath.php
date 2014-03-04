@@ -123,10 +123,12 @@ class URLPath
      *   An array of the path information
      *
      *       [
+     *           'path' => '', // string
      *           'weight' => '', // int
      *           'redirect' => '', // string
      *           'callback' => '', // callable
      *           'arguments' => [], // array
+     *           'page-title' => '', // string
      *       ]
      *
      *   The 'redirect' element is a URL path on which another router is handling.

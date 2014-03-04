@@ -43,6 +43,9 @@ class Setting
         if (!isset($settings['application'])) {
             throw new \LogicException("No application has been configured!");
         }
+        if (!isset($settings['base_url'])) {
+            $settings['base_url'] = self::getBaseURL();
+        }
 
         self::$settings = $settings;
     }
@@ -111,6 +114,24 @@ class Setting
     public function write($name, $value)
     {
         self::$settings[$name] = $value;
+    }
+
+    /**
+     * Get the base URL
+     *
+     * @return string
+     */
+    public static function getBaseURL()
+    {
+        $base_url = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') ? 'https' : 'http' . '://' . $_SERVER['HTTP_HOST'];
+
+        // In contrast to $_SERVER['PHP_SELF'], $_SERVER['SCRIPT_NAME'] can not
+        // be modified by a visitor.
+        if ($base_dir = trim(dirname($_SERVER['SCRIPT_NAME']), '\,/')) {
+            $base_url .= '/' . $base_dir;
+        }
+
+        return $base_url;
     }
 
     /**

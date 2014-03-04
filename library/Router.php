@@ -65,7 +65,7 @@ class Router
      */
     public function run()
     {
-        self::call($this->router);
+        return self::call($this->router);
     }
 
     /**
@@ -87,6 +87,8 @@ class Router
         if (!isset($router)) {
             throw new PageNotFoundException();
         }
+
+        $router['path'] = $this->path->path;
 
         $this->router = $router;
     }
@@ -112,6 +114,11 @@ class Router
             $arguments = array();
         }
 
+        ob_start();
         call_user_func_array($callback, $arguments);
+        $content = ob_get_contents();
+        ob_end_clean();
+
+        return $content;
     }
 }
