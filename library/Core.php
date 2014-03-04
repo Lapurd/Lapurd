@@ -261,7 +261,7 @@ class Core
                     );
                 }
             }
-            if (self::hook($hook, $component = self::getComponent('application', self::get()->getSetting('application')), $func)) {
+            if (self::hook($hook, $component = self::getComponent('application'), $func)) {
                 $hookers[$hook][] = array(
                     'hook' => $hook,
                     'callback' => $func,
