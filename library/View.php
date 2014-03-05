@@ -40,7 +40,9 @@ class View
      */
     public function __construct($name)
     {
-        $info = self::getView($name);
+        if (!$info = self::getView($name)) {
+            throw new \LogicException("View '$name' can not be found!");
+        }
         $this->name = $info['name'];
         $this->provider = $info['provider'];
         $this->template = new Template();
