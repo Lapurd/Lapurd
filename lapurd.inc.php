@@ -56,6 +56,13 @@ function view_page_render(View $view)
     $logo = new Asset('logo');
     $view->setVariable('logo', $logo->getURL());
 
+    // website favicon
+    if (!Asset::getAsset('favicon')) {
+        Asset::addAsset('favicon', LPDROOT . '/views/assets/favicon.ico');
+    }
+    $favicon = new Asset('favicon');
+    $view->setVariable('favicon', $favicon->getHTML());
+
     // website page title
     if (!$view->getVariable('page_title')) {
         $router = Core::get()->getRouter();

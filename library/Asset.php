@@ -42,6 +42,9 @@ class Asset
             case 'png':
                 $type = 'img';
                 break;
+            case 'ico':
+                $type = 'ico';
+                break;
             case 'css':
                 $type = 'css';
                 break;
@@ -103,6 +106,9 @@ class Asset
     public function getHTML()
     {
         switch ($this->type) {
+            case 'ico':
+                return '<link rel="shortcut icon" type="image/x-icon" href="' . $this->getURL() . '">';
+                break;
             case 'img':
                 return '<img href="' . $this->getURL() . '" />';
                 break;

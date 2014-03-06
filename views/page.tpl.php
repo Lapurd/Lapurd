@@ -3,6 +3,7 @@
 <head>
     <title><?= $page_title ?></title>
     <meta charset="UTF-8">
+    <?= $favicon ?>
     <?= $assets ?>
 </head>
 <body>
