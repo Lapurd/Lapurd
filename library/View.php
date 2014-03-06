@@ -26,6 +26,8 @@ class View
 
     private static $views = array();
 
+    private $assets = array();
+
     private $schemas;
 
     private $template;
@@ -171,6 +173,7 @@ class View
         /**
          * Render the template
          */
+        $this->setVariable('assets', Asset::dump(array_keys($this->assets)));
         $this->setVariable('content', $content);
         $this->setVariable('base_url', Core::get()->getBaseURL());
 
@@ -228,6 +231,43 @@ class View
             return $this->variables[$variable];
         } else {
             return null;
+        }
+    }
+
+    /**
+     * Use an asset in the view
+     *
+     * The asset must exist in the assets registry
+     *
+     * @param string $asset
+     *   The name of the asset to be used
+     */
+    public function importAsset($asset)
+    {
+        $this->assets[$asset] = 1;
+    }
+
+    /**
+     * Remove a specific asset from the view
+     *
+     * @param string $asset
+     *   The name of the asset to be used
+     */
+    public function removeAsset($asset)
+    {
+        unset($this->assets[$asset]);
+    }
+
+    /**
+     * Use an collection of assets in the view
+     *
+     * @param array $assets
+     *   An array of asset names to be used
+     */
+    public function importAssets(array $assets)
+    {
+        foreach ($assets as $asset) {
+            $this->assets[$asset] = 1;
         }
     }
 
