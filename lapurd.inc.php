@@ -49,6 +49,13 @@ function views()
  */
 function view_page_render(View $view)
 {
+    // website logo
+    if (!Asset::getAsset('logo')) {
+        Asset::addAsset('logo', LPDROOT . '/views/assets/logo.png');
+    }
+    $logo = new Asset('logo');
+    $view->setVariable('logo', $logo->getURL());
+
     // website page title
     if (!$view->getVariable('page_title')) {
         $router = Core::get()->getRouter();
