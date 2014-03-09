@@ -50,14 +50,14 @@ function views()
 function view_page_render(View $view)
 {
     // website logo
-    if (!Asset::getAsset('logo')) {
+    if (!Asset::getAsset('logo', false)) {
         Asset::addAsset('logo', LPDROOT . '/views/assets/logo.png');
     }
     $logo = new Asset('logo');
     $view->setVariable('logo', $logo->getURL());
 
     // website favicon
-    if (!Asset::getAsset('favicon')) {
+    if (!Asset::getAsset('favicon', false)) {
         Asset::addAsset('favicon', LPDROOT . '/views/assets/favicon.ico');
     }
     $favicon = new Asset('favicon');

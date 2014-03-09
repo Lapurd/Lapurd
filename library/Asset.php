@@ -68,15 +68,21 @@ class Asset
      *
      * @param $name
      *   The name of the asset
+     * @param bool $error
+     *   Whether throw an error if not found
      *
      * @return array|null
      */
-    public static function getAsset($name)
+    public static function getAsset($name, $error=true)
     {
         if (isset(self::$assets[$name])) {
             return self::$assets[$name];
         } else {
-            return null;
+            if ($error) {
+                throw new \LogicException("The requested asset '$name' does not exist!");
+            } else {
+                return null;
+            }
         }
     }
 
