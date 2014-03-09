@@ -4,6 +4,7 @@ namespace Lapurd\Application\HelloWorld;
 function info()
 {
     return array(
+        'theme' => 'Bar',
         'modules' => array(
                 'Foo',
         ),

@@ -1,0 +1,13 @@
+{
+    "name": "Lapurd/Lapurd-Theme-Bar",
+    "type": "project",
+    "require": {
+        "Lapurd/Lapurd": "dev-t"
+    },
+    "autoload": {
+        "psr-4": {
+            "Lapurd\\Theme\\": ""
+        }
+    },
+    "description": "Lapurd Theme Example"
+}

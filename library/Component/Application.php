@@ -37,6 +37,9 @@ abstract class Application extends Component
     {
         parent::__construct($info);
 
+        if (isset($info['theme'])) {
+            Core::get()->setSetting('theme', $info['theme']);
+        }
         if (isset($info['modules'])) {
             Core::get()->setSetting('modules', $info['modules']);
         }

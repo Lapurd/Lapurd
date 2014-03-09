@@ -38,6 +38,13 @@ class Core
     private $path;
 
     /**
+     * The Instance of 'Theme'
+     *
+     * @var Theme
+     */
+    private $theme;
+
+    /**
      * The instance of 'Router'
      *
      * @var Router
@@ -126,6 +133,11 @@ class Core
          * Init Lapurd
          */
         $this->lapurd = self::newComponent('lapurd');
+
+        /**
+         * Init Theme
+         */
+        $this->theme = self::newComponent('theme', $this->getCurrentTheme());
     }
 
     /**
@@ -254,6 +266,13 @@ class Core
                     'provider' => $component,
                 );
             }
+            if (self::hook($hook, $provider = self::getComponent('theme', self::get()->getCurrentTheme()), $func)) {
+                $implementations[$hook][] = array(
+                    'hook' => $hook,
+                    'callback' => $func,
+                    'provider' => $provider,
+                );
+            }
             foreach (self::get()->getEnabledModules() as $module) {
                 if (self::hook($hook, $component = self::getComponent('module', $module), $func)) {
                     $hookers[$hook][] = array(
@@ -335,6 +354,7 @@ class Core
         };
 
         $prefixes = array(
+            'theme' => __NAMESPACE__ . '\\Theme\\',
             'module' => __NAMESPACE__ . '\\Module\\',
             'application' => __NAMESPACE__ . '\\Application\\',
         );
@@ -352,6 +372,13 @@ class Core
         }
 
         switch ($type) {
+            case 'theme':
+                if (file_exists($file = APPROOT . '/themes/' . $name . '/' . $name . '.php') ||
+                    file_exists($file = LPDROOT . '/themes/' . $name . '/' . $name . '.php')
+                ) {
+                    require_once $file;
+                }
+                break;
             case 'module':
                 if (file_exists($file = APPROOT . '/modules/' . $name . '/' . $name . '.php') ||
                     file_exists($file = LPDROOT . '/modules/' . $name . '/' . $name . '.php')
@@ -454,6 +481,16 @@ class Core
         $path = URLPath::resolveAlias($path);
 
         return $path;
+    }
+
+    /**
+     * Getter of property 'theme'
+     *
+     * @return Theme
+     */
+    public function getTheme()
+    {
+        return $this->theme;
     }
 
     /**
@@ -619,6 +656,18 @@ class Core
                     'namespace' => __NAMESPACE__ . '\\Lapurd',
                 );
                 break;
+            case 'theme':
+                $refl = new \ReflectionClass(__NAMESPACE__ . '\\Theme\\' . $name);
+
+                return array(
+                    'name' => $name,
+                    'type' => 'theme',
+                    'class' => __NAMESPACE__ . '\\Theme\\' . $name,
+                    'include' => 'theme.inc.php',
+                    'filepath' => dirname($refl->getFileName()),
+                    'namespace' => __NAMESPACE__ . '\\Theme\\' . $name,
+                );
+                break;
             case 'module':
                 $refl = new \ReflectionClass(__NAMESPACE__ . '\\Module\\' . $name);
 
@@ -700,6 +749,22 @@ class Core
         }
 
         return new $component['class']($info);
+    }
+
+    /**
+     * Get the currently used theme
+     *
+     * @return string
+     *
+     * @throws \LogicException
+     */
+    public function getCurrentTheme()
+    {
+        if ($theme = $this->getSetting('theme')) {
+            return $theme;
+        } else {
+            throw new \LogicException('No theme has been activated yet!');
+        }
     }
 
     /**

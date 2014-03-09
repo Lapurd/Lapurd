@@ -154,6 +154,9 @@ class View
         // Let the provider of the view make modifications.
         Core::invoke('view_' . str_replace('-', '_', $this->name) . '_render', $this->provider, array($this));
 
+        // Give the current theme a chance to modify the view.
+        Core::invoke('view_' . str_replace('-', '_', $this->name) . '_render', Core::getComponent('theme', Core::get()->getCurrentTheme()), array($this));
+
         // The application should be able to modify the view as well.
         Core::invoke('view_' . str_replace('-', '_', $this->name) . '_render', Core::getComponent('application'), array($this));
 
@@ -162,6 +165,13 @@ class View
         if ($candidate['schema'] != $this->name) {
             // Let the provider of the new name schema make modifications.
             Core::invoke('view_' . str_replace('-', '_', $candidate['schema']) . '_render', $candidate['provider'], array($this));
+
+            // Give the current theme a chance to modify for the new name schema.
+            if (Core::getComponent('theme', Core::get()->getCurrentTheme())['namespace'] != $candidate['provider']['namespace']) {
+                Core::invoke('view_' . str_replace('-', '_', $candidate['schema']) . '_render', Core::getComponent('theme', Core::get()->getCurrentTheme()), array($this));
+            } else {
+                throw new \LogicException('Themes are not supposed to add name schemas!');
+            }
 
             // If the new name schema is not provided by the application, then the
             // application should be able to modify the view as well.
@@ -284,6 +294,8 @@ class View
         $providers = array();
         // 'views' directory of the application
         $providers[] = Core::getComponent('application');
+        // 'views' directory of the current theme
+        $providers[] = Core::getComponent('theme', Core::get()->getCurrentTheme());
         // 'views' directory of the view's provider
         if ($provider['namespace'] != Core::getComponent('application')['namespace']) {
             $providers[] = $provider;
