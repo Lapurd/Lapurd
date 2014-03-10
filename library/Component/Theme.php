@@ -17,4 +17,30 @@ namespace Lapurd;
  */
 abstract class Theme extends Component
 {
+    /**
+     * Render a page
+     *
+     * @param string $content
+     *
+     * @return string
+     */
+    public function render($content)
+    {
+        $router = Core::get()->getRouter();
+
+        $view = new View('page');
+
+        /**
+         * A template named with current URL path has higher priority.
+         *
+         * For example:
+         *     page--index.tpl.php
+         */
+        $view->addSchema(
+            preg_replace('/[\/]+/', '-', strtolower($router['path'])),
+            $router['provider']
+        );
+
+        return $view->theme($content);
+    }
 }

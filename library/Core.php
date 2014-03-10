@@ -169,7 +169,7 @@ class Core
 
             $content = $this->router->run();
 
-            print $this->themePage($content);
+            print $this->theme->render($content);
         } catch (HttpException $e) {
             $e->sendHeader();
             $e->showErrorPage();
@@ -419,33 +419,6 @@ class Core
 
         $this->router = new Router($this->path);
 
-    }
-
-    /**
-     * Render a page
-     *
-     * @param string $content
-     *
-     * @return string
-     */
-    public function themePage($content)
-    {
-        $router = $this->getRouter();
-
-        $view = new View('page');
-
-        /**
-         * A template named with current URL path has higher priority.
-         *
-         * For example:
-         *     page--index.tpl.php
-         */
-        $view->addSchema(
-            preg_replace('/[\/]+/', '-', strtolower($router['path'])),
-            $router['provider']
-        );
-
-        return $view->theme($content);
     }
 
     /**
