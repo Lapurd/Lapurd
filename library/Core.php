@@ -266,13 +266,6 @@ class Core
                     'provider' => $component,
                 );
             }
-            if (self::hook($hook, $provider = self::getComponent('theme', self::get()->getCurrentTheme()), $func)) {
-                $implementations[$hook][] = array(
-                    'hook' => $hook,
-                    'callback' => $func,
-                    'provider' => $provider,
-                );
-            }
             foreach (self::get()->getEnabledModules() as $module) {
                 if (self::hook($hook, $component = self::getComponent('module', $module), $func)) {
                     $hookers[$hook][] = array(
