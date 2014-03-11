@@ -40,6 +40,11 @@ function views()
         'page',
 
         /**
+         *
+         */
+        'page-not-found',
+
+        /**
          * The core 'block' view.
          */
         'block',

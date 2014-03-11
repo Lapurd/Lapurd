@@ -1,6 +1,7 @@
 <?php
 namespace Lapurd\Exception\Http;
 
+use Lapurd\View;
 use Lapurd\Exception\Http;
 
 class PageNotFound extends Http
@@ -12,7 +13,7 @@ class PageNotFound extends Http
 
     public function showErrorPage()
     {
-        echo "<h1>404 Page Not Found</h1>";
-        echo "The page you requested can not be found.";
+        $view = new View('page-not-found');
+        print $view->theme('');
     }
 }
