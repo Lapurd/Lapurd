@@ -412,6 +412,7 @@ class Core
 
         $this->router = new Router($this->path);
 
+        self::invokeAll('init');
     }
 
     /**
