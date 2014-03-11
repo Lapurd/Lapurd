@@ -137,7 +137,7 @@ class Core
         /**
          * Init Theme
          */
-        $this->theme = self::newComponent('theme', $this->getCurrentTheme());
+        $this->theme = self::newComponent('theme');
     }
 
     /**
@@ -623,6 +623,10 @@ class Core
                 );
                 break;
             case 'theme':
+                if (is_null($name)) {
+                    $name = self::get()->getCurrentTheme();
+                }
+
                 $refl = new \ReflectionClass(__NAMESPACE__ . '\\Theme\\' . $name);
 
                 return array(

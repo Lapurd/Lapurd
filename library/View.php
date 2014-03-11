@@ -155,7 +155,7 @@ class View
         Core::invoke('view_' . str_replace('-', '_', $this->name) . '_render', $this->provider, array($this));
 
         // Give the current theme a chance to modify the view.
-        Core::invoke('view_' . str_replace('-', '_', $this->name) . '_render', Core::getComponent('theme', Core::get()->getCurrentTheme()), array($this));
+        Core::invoke('view_' . str_replace('-', '_', $this->name) . '_render', Core::getComponent('theme'), array($this));
 
         // The application should be able to modify the view as well.
         Core::invoke('view_' . str_replace('-', '_', $this->name) . '_render', Core::getComponent('application'), array($this));
@@ -167,8 +167,8 @@ class View
             Core::invoke('view_' . str_replace('-', '_', $candidate['schema']) . '_render', $candidate['provider'], array($this));
 
             // Give the current theme a chance to modify for the new name schema.
-            if (Core::getComponent('theme', Core::get()->getCurrentTheme())['namespace'] != $candidate['provider']['namespace']) {
-                Core::invoke('view_' . str_replace('-', '_', $candidate['schema']) . '_render', Core::getComponent('theme', Core::get()->getCurrentTheme()), array($this));
+            if (Core::getComponent('theme')['namespace'] != $candidate['provider']['namespace']) {
+                Core::invoke('view_' . str_replace('-', '_', $candidate['schema']) . '_render', Core::getComponent('theme'), array($this));
             } else {
                 throw new \LogicException('Themes are not supposed to add name schemas!');
             }
@@ -295,7 +295,7 @@ class View
         // 'views' directory of the application
         $providers[] = Core::getComponent('application');
         // 'views' directory of the current theme
-        $providers[] = Core::getComponent('theme', Core::get()->getCurrentTheme());
+        $providers[] = Core::getComponent('theme');
         // 'views' directory of the view's provider
         if ($provider['namespace'] != Core::getComponent('application')['namespace']) {
             $providers[] = $provider;
