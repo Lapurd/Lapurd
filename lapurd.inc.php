@@ -38,6 +38,16 @@ function views()
          * The core 'page' view.
          */
         'page',
+
+        /**
+         * The core 'block' view.
+         */
+        'block',
+
+        /**
+         * The core 'block' view.
+         */
+        'region',
     );
 }
 

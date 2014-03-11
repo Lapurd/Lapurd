@@ -403,6 +403,13 @@ class Core
 
         /**
          *
+         * Build Blocks Registry
+         *
+         */
+        Block::build();
+
+        /**
+         *
          * Build Views Registry
          *
          */

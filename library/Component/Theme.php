@@ -17,6 +17,19 @@ namespace Lapurd;
  */
 abstract class Theme extends Component
 {
+    private $regions = array();
+
+    public function __construct($info)
+    {
+        parent::__construct($info);
+
+        if (is_array($info['regions'])) {
+            foreach ($info['regions'] as $region) {
+                $this->addRegion(new Region($region));
+            }
+        }
+    }
+
     /**
      * Render a page
      *
@@ -41,6 +54,35 @@ abstract class Theme extends Component
             $router['provider']
         );
 
+        $regions = array();
+        foreach ($this->regions as $region) {
+            $regions[$region->getName()] = $region->render();
+        }
+        $view->setVariable('regions', $regions);
+
         return $view->theme($content);
+    }
+
+    /**
+     * Get a region
+     *
+     * @param string $region
+     *   The name of the region
+     *
+     * @return array|null
+     *   A array of blocks to be shown in the region
+     */
+    public function getRegion($region)
+    {
+        if (!isset($this->regions[$region])) {
+            throw new \LogicException("Region '$region' can not be found!'");
+        }
+
+        return $this->regions[$region];
+    }
+
+    public function addRegion(Region $region)
+    {
+        $this->regions[$region->getName()] = $region;
     }
 }

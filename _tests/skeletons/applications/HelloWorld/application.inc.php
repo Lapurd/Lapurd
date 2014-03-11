@@ -11,6 +11,13 @@ function info()
     );
 }
 
+function init()
+{
+    $lapurd = \Lapurd\Core::get();
+    $lapurd->getTheme()->getRegion('left')->addBlock('about-foo');
+    $lapurd->getTheme()->getRegion('right')->addBlock('about-foo-arg');
+}
+
 function paths()
 {
     return array(

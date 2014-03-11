@@ -7,4 +7,9 @@ class Foo extends \Lapurd\Component\Module
     {
         echo "You are saying: '$word'!";
     }
+
+    public function about($word='foo')
+    {
+        echo "This is Foo module, saying '$word'!";
+    }
 }

@@ -3,5 +3,11 @@ namespace Lapurd\Theme\Bar;
 
 function info()
 {
-    return array();
+    return array(
+        'regions' => array(
+            'left',
+            'main',
+            'right',
+        ),
+    );
 }
