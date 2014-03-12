@@ -567,10 +567,16 @@ class Core
      *   The name of the variable
      * @param mixed $value
      *   The value of the variable
+     * @param bool $append
+     *   Append the new value as array if true
      */
-    public function setVariable($name, $value)
+    public function setVariable($name, $value, $append=false)
     {
-        $this->variables[$name] = $value;
+        if (!$append) {
+            $this->variables[$name] = $value;
+        } else {
+            $this->variables[$name][] = $value;
+        }
     }
 
     /**
