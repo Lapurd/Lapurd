@@ -8,6 +8,7 @@
 </head>
 <body>
     <main>
+        <div class="messages"><?= $messages ?></div>
         <?= $content ?>
     </main>
 </body>

@@ -547,6 +547,55 @@ class Core
     }
 
     /**
+     * Add a message to the message queue.
+     *
+     * @param $type
+     *   The type of the message: error, notice, success, warning.
+     * @param $message
+     *   The message content.
+     */
+    public function setMessage($type, $message)
+    {
+        $this->setVariable('messages', array(
+            'type' => $type,
+            'message' => $message,
+        ), true);
+    }
+
+    /**
+     * Get and render all the messages in the message queue.
+     *
+     * @return string
+     */
+    public function getMessages()
+    {
+        $output = '';
+
+        foreach ($this->getVariable('messages') as $message) {
+            switch ($message['type']) {
+                case 'error':
+                    $view = new View('message-error');
+                    break;
+                default:
+                case 'notice':
+                    $view = new View('message-notice');
+                    break;
+                case 'success':
+                    $view = new View('message-success');
+                    break;
+                case 'warning':
+                    $view = new View('message-warning');
+                    break;
+            }
+            $output .= $view->theme($message['message']);
+        }
+
+        $this->setVariable('messages', '');
+
+        return $output;
+    }
+
+    /**
      * Get a variable
      *
      * @param string $name

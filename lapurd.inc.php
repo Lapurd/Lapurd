@@ -53,6 +53,14 @@ function views()
          * The core 'block' view.
          */
         'region',
+
+        /**
+         * The message related views.
+         */
+        'message-error',
+        'message-notice',
+        'message-success',
+        'message-warning',
     );
 }
 
@@ -77,4 +85,6 @@ function view_page_render(View $view)
     }
     $favicon = new Asset('favicon');
     $view->setVariable('favicon', $favicon->getHTML());
+
+    $view->setVariable('messages', Core::get()->getMessages());
 }
