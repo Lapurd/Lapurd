@@ -571,7 +571,7 @@ class Core
     {
         $output = '';
 
-        foreach ($this->getVariable('messages') as $message) {
+        foreach ((array) $this->getVariable('messages') as $message) {
             switch ($message['type']) {
                 case 'error':
                     $view = new View('message-error');
