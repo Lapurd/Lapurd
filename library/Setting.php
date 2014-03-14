@@ -123,6 +123,12 @@ class Setting
      */
     public static function getBaseURL()
     {
+        static $base_url;
+
+        if ($base_url) {
+            return $base_url;
+        }
+
         $base_url = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') ? 'https' : 'http' . '://' . $_SERVER['HTTP_HOST'];
 
         // In contrast to $_SERVER['PHP_SELF'], $_SERVER['SCRIPT_NAME'] can not
