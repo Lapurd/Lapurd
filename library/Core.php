@@ -452,7 +452,11 @@ class Core
             $path = 'index';
         }
 
+        Core::invokeAll('get_path_pre', array(&$path));
+
         $path = URLPath::resolveAlias($path);
+
+        Core::invokeAll('get_path_pre', array(&$path));
 
         return $path;
     }
