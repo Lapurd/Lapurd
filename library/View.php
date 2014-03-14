@@ -102,7 +102,7 @@ class View
      * @return string
      *   The HTML result after the theming
      */
-    public function theme($content)
+    public function theme($content='')
     {
         /**
          * Prepare templates
