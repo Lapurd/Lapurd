@@ -59,6 +59,7 @@ abstract class Theme extends Component
             $view->setVariable('page_title', $router['page-title']);
         } else {
             $view->setVariable('page_title', 'Hello World');
+            Core::get()->setMessage('warning', "No page title found, set it to 'Hello World'!");
         }
 
         $regions = array();
