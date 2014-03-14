@@ -60,6 +60,10 @@ class Block
 
     private $name;
 
+    private $on_paths = array();
+
+    private $off_paths = array();
+
     public function __construct($name)
     {
         $this->name = $name;
@@ -72,6 +76,18 @@ class Block
      */
     public function render()
     {
+        $path = Core::get()->getPath();
+
+        if (!empty($this->on_paths)) {
+            if (!array_key_exists($path, $this->on_paths)) {
+                return;
+            }
+        } elseif (!empty($this->off_paths)) {
+            if (array_key_exists($path, $this->off_paths)) {
+                return;
+            }
+        }
+
         $block = self::getBlock($this->name);
 
         if (!isset($block['content'])) {
@@ -115,5 +131,27 @@ class Block
         );
 
         return $view->theme($content);
+    }
+
+    /**
+     * Show block only on the given path
+     *
+     * @param string $path
+     *   A URL path query
+     */
+    public function showOnPath($path)
+    {
+        $this->on_paths[$path] = 1;
+    }
+
+    /**
+     * Don't show block on the given path
+     *
+     * @param string $path
+     *   A URL path query
+     */
+    public function showOffPath($path)
+    {
+        $this->off_paths[$path] = 1;
     }
 }

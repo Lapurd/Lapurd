@@ -7,6 +7,10 @@ class Region
 
     private $blocks = array();
 
+    private $on_paths = array();
+
+    private $off_paths = array();
+
     public function __construct($name)
     {
         $this->name = $name;
@@ -19,6 +23,18 @@ class Region
      */
     public function render()
     {
+        $path = Core::get()->getPath();
+
+        if (!empty($this->on_paths)) {
+            if (!array_key_exists($path, $this->on_paths)) {
+                return;
+            }
+        } elseif (!empty($this->off_paths)) {
+            if (array_key_exists($path, $this->off_paths)) {
+                return;
+            }
+        }
+
         $content = '';
 
         foreach ($this->blocks as $block) {
@@ -54,4 +70,31 @@ class Region
 
         $this->blocks[] = new Block($block);
     }
+
+    /**
+     * Show region only on the given path
+     *
+     * @param string $region
+     *   The name of the region
+     * @param string $path
+     *   A URL path query
+     */
+    public function showOnPath($region, $path)
+    {
+        $this->on_paths[$path] = 1;
+    }
+
+    /**
+     * Don't show region on the given path
+     *
+     * @param string $region
+     *   The name of the region
+     * @param string $path
+     *   A URL path query
+     */
+    public function showOffPath($region, $path)
+    {
+        $this->off_paths[$path] = 1;
+    }
+
 }
