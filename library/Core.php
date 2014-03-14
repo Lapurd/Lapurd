@@ -629,6 +629,22 @@ class Core
     }
 
     /**
+     * Set title for a page
+     *
+     * @param string $title
+     *
+     * @throws \LogicException
+     */
+    public function setPageTitle($title)
+    {
+        if (!$this->router) {
+            throw new \LogicException("The router has not be initialized yet!");
+        }
+
+        $this->router->setPageTitle($title);
+    }
+
+    /**
      * Init a requested component
      *
      * @param string $type

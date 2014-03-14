@@ -121,4 +121,16 @@ class Router
 
         return $content;
     }
+
+    /**
+     * @param $title
+     */
+    public function setPageTitle($title)
+    {
+        if (!$this->router) {
+            throw new \LogicException("The router has not be initialized yet!");
+        }
+
+        $this->router['page-title'] = $title;
+    }
 }
