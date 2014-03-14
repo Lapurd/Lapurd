@@ -41,6 +41,10 @@ abstract class Theme extends Component
     {
         $router = Core::get()->getRouter();
 
+        if (isset($router['themable']) && !$router['themable']) {
+            return $content;
+        }
+
         $view = new View('page');
 
         /**
