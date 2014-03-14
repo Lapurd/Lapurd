@@ -30,7 +30,7 @@ class Asset
     public static function addAsset($name, $asset)
     {
         if (file_exists($asset)) {
-            $path = str_replace(SYSROOT . '/', '', realpath($asset));
+            $path = str_replace(SYSROOT . '/', '', $asset);
         } else {
             throw new \LogicException("Asset '$asset' can not be located!");
         }
