@@ -105,10 +105,22 @@ class View
     public function theme($content='')
     {
         /**
+         * Hook to alter the schemas
+         */
+        Core::invokeAll('view_' . $this->name . '_schemas', array(&$this->schemas));
+
+        /**
          * Prepare templates
          */
         $candidates = array();
         if (isset($this->schemas)) {
+            usort($this->schemas, function ($a, $b) {
+                if ($a['weight'] == $b['weight']) {
+                    return 0;
+                }
+
+                return ($a['weight'] > $b['weight']) ? -1 : 1;
+            });
             foreach ($this->schemas as $schema) {
                 $candidates[] = array(
                     'schema' => $this->name . '--' . $schema['schema'],
@@ -199,16 +211,19 @@ class View
      *   A naming schema that the template might use
      * @param array $provider
      *   The component provider of this naming schema
+     * @param int $weight
+     *   An integer that indicates the priority
      *
      *   There must be a template with the following name placed inside the
      *   'views/' directory of this provider.
      *
      *       $this->name . '--' . $schema . '.tpl.php'
      */
-    public function addSchema($schema, array $provider)
+    public function addSchema($schema, array $provider, $weight = 0)
     {
         $this->schemas[] = array(
             'schema' => $schema,
+            'weight' => $weight,
             'provider' => $provider,
         );
     }
