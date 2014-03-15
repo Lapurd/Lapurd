@@ -677,6 +677,8 @@ class Core
      */
     public static function getComponent($type, $name=null)
     {
+        static $components;
+
         switch ($type) {
             case 'lapurd':
                 $refl = new \ReflectionClass(__NAMESPACE__ . '\\Lapurd');
@@ -739,17 +741,27 @@ class Core
                 break;
         }
 
+        $namespace = $info['namespace'];
+
+        if (isset($components[$namespace])) {
+            return $components[$namespace];
+        }
+
         if (!self::loadComponent($info)) {
             throw new \LogicException("No component $type '$name' can be found!");
         }
 
-        if (is_callable($callback = $info['namespace'] . '\\info')) {
+        if (!is_callable($callback = $namespace . '\\info')) {
             $info = array_merge((array) call_user_func($callback), $info);
         }
 
         $info = array_merge((array) call_user_func($callback), $info);
 
-        return new $info['class']($info);
+        $component = new $info['class']($info);
+
+        $components[$namespace] = $component;
+
+        return $component;
     }
 
     /**
