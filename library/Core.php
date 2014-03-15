@@ -104,20 +104,6 @@ class Core
         $this->setting = new Setting();
 
         /**
-         * Directory of the application root
-         */
-        $application = $this->getSetting('application');
-        if (is_dir(SYSROOT . '/applications/' . $application)) {
-            DEFINE(__NAMESPACE__ . '\\APPROOT', SYSROOT . '/applications/' . $application);
-        } else {
-            if (SYSROOT == LPDROOT) {
-                DEFINE(__NAMESPACE__ . '\\APPROOT', SYSROOT . '/application');
-            } else {
-                DEFINE(__NAMESPACE__ . '\\APPROOT', SYSROOT);
-            }
-        }
-
-        /**
          * Init Application
          */
         $this->application = self::getComponent('application');
@@ -364,16 +350,24 @@ class Core
             return;
         }
 
+        if (!is_dir($approot = SYSROOT . '/applications/' . $name)) {
+            if (SYSROOT == LPDROOT) {
+                $approot = SYSROOT . '/application';
+            } else {
+                $approot = SYSROOT;
+            }
+        }
+
         switch ($type) {
             case 'theme':
-                if (file_exists($file = APPROOT . '/themes/' . $name . '/' . $name . '.php') ||
+                if (file_exists($file = $approot . '/themes/' . $name . '/' . $name . '.php') ||
                     file_exists($file = LPDROOT . '/themes/' . $name . '/' . $name . '.php')
                 ) {
                     require_once $file;
                 }
                 break;
             case 'module':
-                if (file_exists($file = APPROOT . '/modules/' . $name . '/' . $name . '.php') ||
+                if (file_exists($file = $approot . '/modules/' . $name . '/' . $name . '.php') ||
                     file_exists($file = LPDROOT . '/modules/' . $name . '/' . $name . '.php')
                 ) {
                     require_once $file;
