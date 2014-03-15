@@ -11,6 +11,10 @@
 
 namespace Lapurd\Lapurd;
 
+use Lapurd\Core;
+use Lapurd\View;
+use Lapurd\Asset;
+
 /**
  * URL paths that the system provides as fallback
  *
@@ -74,14 +78,14 @@ function view_page_render(View $view)
 {
     // website logo
     if (!Asset::getAsset('logo', false)) {
-        Asset::addAsset('logo', LPDROOT . '/views/assets/logo.png');
+        Asset::addAsset('logo', \Lapurd\LPDROOT . '/views/assets/logo.png');
     }
     $logo = new Asset('logo');
     $view->setVariable('logo', $logo->getURL());
 
     // website favicon
     if (!Asset::getAsset('favicon', false)) {
-        Asset::addAsset('favicon', LPDROOT . '/views/assets/favicon.ico');
+        Asset::addAsset('favicon', \Lapurd\LPDROOT . '/views/assets/favicon.ico');
     }
     $favicon = new Asset('favicon');
     $view->setVariable('favicon', $favicon->getHTML());

@@ -47,10 +47,10 @@ class Block
      *           'arguments' => [], // array, A array of arguments mapping for the callback
      *       ]
      *   ]
-     * @param array $provider
+     * @param Component $provider
      *   A component provider
      */
-    public static function addBlock($name, array $block, array $provider)
+    public static function addBlock($name, array $block, Component $provider)
     {
         $block['name'] = $name;
         $block['provider'] = $provider;

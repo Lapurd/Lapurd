@@ -81,4 +81,15 @@ abstract class Component
             throw new \LogicException("No property can be found!");
         }
     }
+
+    public function __isset($property)
+    {
+        if (property_exists($this, $property)) {
+            return true;
+        } elseif (isset($this->info[$property])) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }

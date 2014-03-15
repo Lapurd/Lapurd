@@ -88,10 +88,10 @@ class URLPath
 
             $candidates = self::$paths[$path];
             foreach ($candidates as $candidate) {
-                if ($candidate['provider']['type'] == 'application') {
+                if ($candidate['provider']->type == 'application') {
                     $info = $candidate;
                     break;
-                } elseif ($candidate['provider']['type'] == 'module') {
+                } elseif ($candidate['provider']->type == 'module') {
                     if (empty($info)) {
                         $info = $candidate;
                     } elseif (isset($candidate['weight'])) {
@@ -100,7 +100,7 @@ class URLPath
                         }
                     }
                 } else {
-                    throw new \LogicException("Unsupported component type '" . $candidate['provider']['type'] ."'!");
+                    throw new \LogicException("Unsupported component type '" . $candidate['provider']->type ."'!");
                 }
             }
 
@@ -137,16 +137,16 @@ class URLPath
      *   URL path. Suppose the 'arguments' array is [arg1, 2, 3, arg4], and the
      *   current URL path is 'path/hello/to/foo/do/bar/something', then the
      *   real callback arguments array will be [arg1, 'foo', 'bar', arg4].
-     * @param array $provider
+     * @param Component $provider
      *   A component provider
      */
-    public static function addPath($path, array $info, array $provider)
+    public static function addPath($path, array $info, Component $provider)
     {
         self::addMask($path);
 
         $info['provider'] = $provider;
 
-        self::$paths[$path][$provider['namespace']] = $info;
+        self::$paths[$path][$provider->namespace] = $info;
     }
 
     /**

@@ -120,24 +120,24 @@ class Core
         /**
          * Init Application
          */
-        $this->application = self::newComponent('application');
+        $this->application = self::getComponent('application');
 
         /**
          * Init Modules
          */
         foreach ($this->getEnabledModules() as $module) {
-            $this->modules[$module] = self::newComponent('module', $module);
+            $this->modules[$module] = self::getComponent('module', $module);
         };
 
         /**
          * Init Lapurd
          */
-        $this->lapurd = self::newComponent('lapurd');
+        $this->lapurd = self::getComponent('lapurd');
 
         /**
          * Init Theme
          */
-        $this->theme = self::newComponent('theme');
+        $this->theme = self::getComponent('theme');
     }
 
     /**
@@ -183,7 +183,7 @@ class Core
      *
      * @param string $hook
      *   The name of the hook
-     * @param array $component
+     * @param Component $component
      *   A component to check
      * @param null $callback
      *   A normalized callback from is_callable
@@ -193,13 +193,13 @@ class Core
      *
      * @throws \LogicException
      */
-    public static function hook($hook, array $component, &$callback = null)
+    public static function hook($hook, Component $component, &$callback = null)
     {
-        if (!isset($component['namespace'])) {
+        if (!isset($component->namespace)) {
             throw new \LogicException("Invalid component!");
         }
 
-        return is_callable($component['namespace'] . '\\' . $hook, false, $callback);
+        return is_callable($component->namespace . '\\' . $hook, false, $callback);
     }
 
     /**
@@ -207,7 +207,7 @@ class Core
      *
      * @param string $hook
      *   The name of the hook
-     * @param array $component
+     * @param Component $component
      *   A component that implements the hook
      * @param array $argument
      *   Arguments to be passed to the hook implementation
@@ -218,7 +218,7 @@ class Core
      *   The return value of the hook implementation, or the result of the
      *   callback that has been applied on the hook implementation result.
      */
-    public static function invoke($hook, array $component, array $argument=array(), callable $callback=null)
+    public static function invoke($hook, Component $component, array $argument=array(), callable $callback=null)
     {
         if (self::hook($hook, $component, $func)) {
             $result = call_user_func_array($func, $argument);
@@ -649,23 +649,6 @@ class Core
     }
 
     /**
-     * Init a requested component
-     *
-     * @param string $type
-     *   The type of the component
-     * @param string|null $name
-     *   The name of the component
-     *
-     * @return Component
-     */
-    private static function newComponent($type, $name=null)
-    {
-        $component = self::getComponent($type, $name);
-
-        return self::initComponent($component);
-    }
-
-    /**
      * Get a component build array
      *
      * A component is an important concept in Lapurd, it distinguishes
@@ -685,10 +668,12 @@ class Core
      * @param string|null $name
      *   The name of the component
      *
-     * @return array
-     *   A component build array
+     * @return Component
+     *   A component instance
      *
+     * @throws \LogicException
      * @throws \DomainException
+     * @throws \BadFunctionCallException
      */
     public static function getComponent($type, $name=null)
     {
@@ -696,7 +681,7 @@ class Core
             case 'lapurd':
                 $refl = new \ReflectionClass(__NAMESPACE__ . '\\Lapurd');
 
-                return array(
+                $info = array(
                     'name' => __NAMESPACE__,
                     'type' => 'lapurd',
                     'class' => __NAMESPACE__ . '\\Lapurd',
@@ -712,7 +697,7 @@ class Core
 
                 $refl = new \ReflectionClass(__NAMESPACE__ . '\\Theme\\' . $name);
 
-                return array(
+                $info = array(
                     'name' => $name,
                     'type' => 'theme',
                     'class' => __NAMESPACE__ . '\\Theme\\' . $name,
@@ -724,7 +709,7 @@ class Core
             case 'module':
                 $refl = new \ReflectionClass(__NAMESPACE__ . '\\Module\\' . $name);
 
-                return array(
+                $info = array(
                     'name' => $name,
                     'type' => 'module',
                     'class' => __NAMESPACE__ . '\\Module\\' . $name,
@@ -740,7 +725,7 @@ class Core
 
                 $refl = new \ReflectionClass(__NAMESPACE__ . '\\Application\\' . $name);
 
-                return array(
+                $info = array(
                     'name' => $name,
                     'type' => 'application',
                     'class' => __NAMESPACE__ . '\\Application\\' . $name,
@@ -753,6 +738,18 @@ class Core
                 throw new \DomainException("Unknown component type '$type'!");
                 break;
         }
+
+        if (!self::loadComponent($info)) {
+            throw new \LogicException("No component $type '$name' can be found!");
+        }
+
+        if (is_callable($callback = $info['namespace'] . '\\info')) {
+            $info = array_merge((array) call_user_func($callback), $info);
+        }
+
+        $info = array_merge((array) call_user_func($callback), $info);
+
+        return new $info['class']($info);
     }
 
     /**
@@ -777,31 +774,6 @@ class Core
         } else {
             return false;
         }
-    }
-
-    /**
-     * Init a requested component
-     *
-     * @param array $component
-     *   An component build array
-     *
-     * @return Component
-     *
-     * @throws \LogicException
-     */
-    public static function initComponent($component)
-    {
-        if (!self::loadComponent($component)) {
-            throw new \LogicException("No component " . $component['type'] . " '" . $component['name'] . "' can be found!");
-        }
-
-        if (is_callable($callback = $component['namespace'] . '\\info')) {
-            $info = array_merge((array) call_user_func($callback), $component);
-        } else {
-            $info = $component;
-        }
-
-        return new $component['class']($info);
     }
 
     /**

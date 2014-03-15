@@ -82,10 +82,10 @@ class View
      *
      * @param string $name
      *   The name of the view
-     * @param array $provider
+     * @param Component $provider
      *   A component provider
      */
-    public static function addView($name, array $provider)
+    public static function addView($name, Component $provider)
     {
         self::$views[$name] = array(
             'name' => $name,
@@ -146,7 +146,7 @@ class View
          */
         foreach ($candidates as $candidate) {
             foreach ($candidate['template']['providers'] as $template_provider) {
-                if (file_exists($template_filepath = $template_provider['filepath'] . '/views/' . $candidate['template']['filename'])) {
+                if (file_exists($template_filepath = $template_provider->filepath . '/views/' . $candidate['template']['filename'])) {
                     $template = $candidate['template'];
                     $template['provider'] = $template_provider;
                     $template['filepath'] = $template_filepath;
@@ -179,7 +179,7 @@ class View
             Core::invoke('view_' . str_replace('-', '_', $candidate['schema']) . '_render', $candidate['provider'], array($this));
 
             // Give the current theme a chance to modify for the new name schema.
-            if (Core::getComponent('theme')['namespace'] != $candidate['provider']['namespace']) {
+            if (Core::getComponent('theme')->namespace != $candidate['provider']->namespace) {
                 Core::invoke('view_' . str_replace('-', '_', $candidate['schema']) . '_render', Core::getComponent('theme'), array($this));
             } else {
                 throw new \LogicException('Themes are not supposed to add name schemas!');
@@ -187,7 +187,7 @@ class View
 
             // If the new name schema is not provided by the application, then the
             // application should be able to modify the view as well.
-            if (Core::getComponent('application')['namespace'] != $candidate['provider']['namespace']) {
+            if (Core::getComponent('application')->namespace != $candidate['provider']->namespace) {
                 Core::invoke('view_' . str_replace('-', '_', $candidate['schema']) . '_render', Core::getComponent('application'), array($this));
             }
         }
@@ -209,7 +209,7 @@ class View
      *
      * @param string $schema
      *   A naming schema that the template might use
-     * @param array $provider
+     * @param Component $provider
      *   The component provider of this naming schema
      * @param int $weight
      *   An integer that indicates the priority
@@ -219,7 +219,7 @@ class View
      *
      *       $this->name . '--' . $schema . '.tpl.php'
      */
-    public function addSchema($schema, array $provider, $weight = 0)
+    public function addSchema($schema, Component $provider, $weight = 0)
     {
         $this->schemas[] = array(
             'schema' => $schema,
@@ -299,12 +299,12 @@ class View
     /**
      * Get all the possible locations for a template
      *
-     * @param array $provider
+     * @param Component $provider
      *   A component provider
      *
      * @return array
      */
-    private static function getProviders(array $provider)
+    private static function getProviders(Component $provider)
     {
         $providers = array();
         // 'views' directory of the application
@@ -312,7 +312,7 @@ class View
         // 'views' directory of the current theme
         $providers[] = Core::getComponent('theme');
         // 'views' directory of the view's provider
-        if ($provider['namespace'] != Core::getComponent('application')['namespace']) {
+        if ($provider->namespace != Core::getComponent('application')->namespace) {
             $providers[] = $provider;
         }
 

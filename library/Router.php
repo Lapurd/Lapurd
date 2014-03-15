@@ -104,7 +104,7 @@ class Router
      */
     public static function call($callable)
     {
-        if (!isset($callable['callback']) || !is_callable($callback = array(Core::initComponent($callable['provider']), $callable['callback']))) {
+        if (!isset($callable['callback']) || !is_callable($callback = array($callable['provider'], $callable['callback']))) {
             throw new \BadMethodCallException("Invalid callback '" . $callable['callback'] . "'!");
         }
 
