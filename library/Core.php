@@ -40,7 +40,7 @@ class Core
     /**
      * The Instance of 'Theme'
      *
-     * @var Theme
+     * @var Component\Theme
      */
     private $theme;
 
@@ -458,7 +458,7 @@ class Core
     /**
      * Getter of property 'theme'
      *
-     * @return Theme
+     * @return Component\Theme
      */
     public function getTheme()
     {
