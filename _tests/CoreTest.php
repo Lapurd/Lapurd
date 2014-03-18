@@ -21,6 +21,37 @@ use Jeremeamia\SuperClosure\SerializableClosure;
  */
 class CoreTest extends \PHPUnit_Framework_TestCase
 {
+//    private static $string;
+//
+//    public static function setUpBeforeClass()
+//    {
+//        self::$string .= ob_get_clean();
+//        ob_start();
+//    }
+//
+//    public function setUp()
+//    {
+//        // Close the ob_start for this test first
+//        ob_end_clean();
+//
+//
+//        self::$string .= ob_get_clean();
+//
+//        ob_start();
+//
+//        ob_start();
+//    }
+//
+//    public function tearDown()
+//    {
+//    }
+//
+//    public static function tearDownAfterClass()
+//    {
+//        self::$string .= ob_get_clean();
+//        print self::$string;
+//    }
+
     private function runLapurd(Helper\LapurdVfs $vfs)
     {
         require_once $vfs->getLapurd()->getChild('bootstrap.php')->url();
