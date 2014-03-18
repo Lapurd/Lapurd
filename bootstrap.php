@@ -19,7 +19,7 @@ DEFINE(__NAMESPACE__ . '\\SYSROOT', dirname($_SERVER['SCRIPT_FILENAME']));
 /**
  * Directory of the Lapurd root
  */
-DEFINE(__NAMESPACE__ . '\\LPDROOT', __DIR__);
+DEFINE(__NAMESPACE__ . '\\LPDROOT', dirname($_SERVER['SCRIPT_FILENAME']) . '/' . 'vendor/Lapurd/Lapurd');
 
 /**
  * Autoloader for Lapurd library
