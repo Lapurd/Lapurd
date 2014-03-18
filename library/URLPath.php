@@ -84,25 +84,33 @@ class URLPath
     public static function getPath($path)
     {
         if (isset(self::$paths[$path])) {
-            $info = array();
-
             $candidates = self::$paths[$path];
-            foreach ($candidates as $candidate) {
-                if ($candidate['provider']->type == 'application') {
-                    $info = $candidate;
-                    break;
-                } elseif ($candidate['provider']->type == 'module') {
-                    if (empty($info)) {
-                        $info = $candidate;
-                    } elseif (isset($candidate['weight'])) {
-                        if (!isset($info['weight']) || $info['weight'] < $candidate['weight']) {
-                            $info = $candidate;
+
+            usort($candidates, function ($a, $b) {
+                if ($a['provider']->type == 'application' || $b['provider']->type = 'lapurd') {
+                    return -1;
+                } elseif ($b['provider']->type == 'application' || $a['provider']->type = 'lapurd') {
+                    return 1;
+                } elseif ($a['provider']->type == 'module' && $b['provider']->type == 'module') {
+                    if (isset($a['weight']) && !isset($b['weight'])) {
+                        return -1;
+                    } elseif (!isset($a['weight']) && isset($b['weight'])) {
+                        return 1;
+                    } elseif (!isset($a['weight']) && !isset($b['weight'])) {
+                        return 0;
+                    } else {
+                        if ($a['weight'] < $b['weight']) {
+                            return 1;
+                        } else {
+                            return -1;
                         }
                     }
                 } else {
-                    throw new \LogicException("Unsupported component type '" . $candidate['provider']->type ."'!");
+                    throw new \LogicException("Unsupported component type!");
                 }
-            }
+            });
+
+            $info = $candidates[0];
 
             while (isset($info['redirect'])) {
                 $info = self::getPath($info['redirect']);
