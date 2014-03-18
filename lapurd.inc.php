@@ -9,7 +9,7 @@
  * @package    Lapurd
  */
 
-namespace Lapurd;
+namespace Lapurd\Lapurd;
 
 /**
  * URL paths that the system provides as fallback

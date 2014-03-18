@@ -8,7 +8,7 @@
     "keywords": ["Lapurd"],
     "autoload": {
         "psr-4": {
-            "Lapurd\\": "library/"
+            "Lapurd\\": [ "", "library/"]
         }
     },
     "description": "A simple Drupal-like PHP framework."

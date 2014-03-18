@@ -363,7 +363,7 @@ class Core
                     'type' => 'lapurd',
                     'class' => __NAMESPACE__ . '\\Lapurd',
                     'filepath' => SYSROOT,
-                    'namespace' => __NAMESPACE__,
+                    'namespace' => __NAMESPACE__ . '\\Lapurd',
                 );
                 break;
             case 'module':

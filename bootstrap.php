@@ -28,6 +28,12 @@ DEFINE(__NAMESPACE__ . '\\APPROOT', __DIR__ . '/application');
  */
 function autoload($class)
 {
+    if ($class == 'Lapurd\\Lapurd' && file_exists($file = __DIR__ . '/Lapurd.php'))
+    {
+        require_once $file;
+        return;
+    }
+
     $strltrim = function ($string, $prefix) {
         if (substr($string, 0, strlen($prefix)) == $prefix) {
             return substr($string, strlen($prefix));
