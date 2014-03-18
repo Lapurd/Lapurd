@@ -58,5 +58,9 @@ function autoload($class)
     }
 }
 
-// Register autoloader for Lapurd library
-spl_autoload_register(__NAMESPACE__ . '\\autoload');
+// If system root is the same as Lapurd root, it means we are not
+// using Composer, then register our own autoloader.
+if (SYSROOT == LPDROOT) {
+    // Register autoloader for Lapurd library
+    spl_autoload_register(__NAMESPACE__ . '\\autoload');
+}
