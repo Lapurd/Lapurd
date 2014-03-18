@@ -77,14 +77,4 @@ function view_page_render(View $view)
     }
     $favicon = new Asset('favicon');
     $view->setVariable('favicon', $favicon->getHTML());
-
-    // website page title
-    if (!$view->getVariable('page_title')) {
-        $router = Core::get()->getRouter();
-        if (isset($router['page-title'])) {
-            $view->setVariable('page_title', $router['page-title']);
-        } else {
-            $view->setVariable('page_title', 'Hello World');
-        }
-    }
 }

@@ -54,6 +54,13 @@ abstract class Theme extends Component
             $router['provider']
         );
 
+        // website page title
+        if (isset($router['page-title'])) {
+            $view->setVariable('page_title', $router['page-title']);
+        } else {
+            $view->setVariable('page_title', 'Hello World');
+        }
+
         $regions = array();
         foreach ($this->regions as $region) {
             $regions[$region->getName()] = $region->render();
