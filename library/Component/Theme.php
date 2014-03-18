@@ -22,6 +22,52 @@ use Lapurd\Component;
  */
 abstract class Theme extends Component
 {
+    public static function get($name=null)
+    {
+        if (is_null($name)) {
+            $name = Core::get()->getCurrentTheme();
+        }
+
+        return parent::get($name);
+    }
+
+    public static function info($name=null)
+    {
+        if (is_null($name)) {
+            $name = Core::get()->getCurrentTheme();
+        }
+
+        $refl = new \ReflectionClass('Lapurd\\Theme\\' . $name);
+
+        return array(
+            'name' => $name,
+            'type' => 'theme',
+            'class' => 'Lapurd\\Theme\\' . $name,
+            'include' => 'theme.inc.php',
+            'filepath' => dirname($refl->getFileName()),
+            'namespace' => 'Lapurd\\Theme\\' . $name,
+        );
+    }
+
+    public static function autoload($class)
+    {
+        $prefix = 'Lapurd\\Theme\\';
+
+        if (substr($class, 0, strlen($prefix)) != $prefix) {
+            return;
+        }
+
+        $name = substr($class, strlen($prefix));
+
+        $approot = Application::info()['filepath'];
+
+        if (is_dir($path = $approot . '/themes/' . $name) ||
+            is_dir($path = \Lapurd\LPDROOT . '/themes/' . $name)
+        ) {
+            require_once $path . '/' . $name . '.php';
+        }
+    }
+
     private $regions = array();
 
     public function __construct($info)

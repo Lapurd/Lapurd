@@ -25,6 +25,60 @@ use Lapurd\Component;
  */
 abstract class Application extends Component
 {
+    public static function get($name=null)
+    {
+        if (is_null($name)) {
+            if (!$name = Core::get()->getSetting('application')) {
+                throw new \LogicException('No application is installed!');
+            }
+        }
+
+        return parent::get($name);
+    }
+
+    public static function info($name=null)
+    {
+        if (is_null($name)) {
+            if (!$name = Core::get()->getSetting('application')) {
+                throw new \LogicException('No application is installed!');
+            }
+        }
+
+        $refl = new \ReflectionClass('Lapurd\\Application\\' . $name);
+
+        return array(
+            'name' => $name,
+            'type' => 'application',
+            'class' => 'Lapurd\\Application\\' . $name,
+            'include' => 'application.inc.php',
+            'filepath' => dirname($refl->getFileName()),
+            'namespace' => 'Lapurd\\Application\\' . $name,
+        );
+    }
+
+    public static function autoload($class)
+    {
+        $prefix = 'Lapurd\\Application\\';
+
+        if (substr($class, 0, strlen($prefix)) != $prefix) {
+            return;
+        }
+
+        $name = substr($class, strlen($prefix));
+
+        if (is_dir(\Lapurd\SYSROOT . '/applications/' . $name)) {
+            $path =  \Lapurd\SYSROOT . '/applications/' . $name;
+        } elseif ($app_path = \Lapurd\SYSROOT == \Lapurd\LPDROOT) {
+            $path = \Lapurd\SYSROOT . '/application';
+        } else {
+            $path = \Lapurd\SYSROOT;
+        }
+
+        if ($path) {
+            require_once $path . '/' . $name . '.php';
+        }
+    }
+
     /**
      * Constructor
      *

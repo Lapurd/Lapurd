@@ -106,24 +106,24 @@ class Core
         /**
          * Init Application
          */
-        $this->application = self::getComponent('application');
+        $this->application = Component\Application::get();
 
         /**
          * Init Modules
          */
         foreach ($this->getEnabledModules() as $module) {
-            $this->modules[$module] = self::getComponent('module', $module);
+            $this->modules[$module] = Component\Module::get($module);
         };
 
         /**
          * Init Lapurd
          */
-        $this->lapurd = self::getComponent('lapurd');
+        $this->lapurd = Component\Lapurd::get();
 
         /**
          * Init Theme
          */
-        $this->theme = self::getComponent('theme');
+        $this->theme = Component\Theme::get();
     }
 
     /**
@@ -245,7 +245,7 @@ class Core
 
         if (!isset($hookers[$hook])) {
             $hookers[$hook] = array();
-            if (self::hook($hook, $component = self::getComponent('core'), $func)) {
+            if (self::hook($hook, $component = Component\Lapurd::get(), $func)) {
                 $hookers[$hook][] = array(
                     'hook' => $hook,
                     'callback' => $func,
@@ -253,7 +253,7 @@ class Core
                 );
             }
             foreach (self::get()->getEnabledModules() as $module) {
-                if (self::hook($hook, $component = self::getComponent('module', $module), $func)) {
+                if (self::hook($hook, $component = Component\Module::get($module), $func)) {
                     $hookers[$hook][] = array(
                         'hook' => $hook,
                         'callback' => $func,
@@ -261,7 +261,7 @@ class Core
                     );
                 }
             }
-            if (self::hook($hook, $component = self::getComponent('application'), $func)) {
+            if (self::hook($hook, $component = Component\Application::get(), $func)) {
                 $hookers[$hook][] = array(
                     'hook' => $hook,
                     'callback' => $func,
@@ -324,63 +324,9 @@ class Core
      */
     public static function autoload($class)
     {
-        $strltrim = function ($string, $prefix) {
-            if (substr($string, 0, strlen($prefix)) == $prefix) {
-                return substr($string, strlen($prefix));
-            } else {
-                return $string;
-            }
-        };
-
-        $prefixes = array(
-            'theme' => __NAMESPACE__ . '\\Theme\\',
-            'module' => __NAMESPACE__ . '\\Module\\',
-            'application' => __NAMESPACE__ . '\\Application\\',
-        );
-
-        foreach ($prefixes as $type => $prefix) {
-            $str = $strltrim($class, $prefix);
-            if ($str != $class) {
-                $name = $str;
-                break;
-            }
-        }
-
-        if (!isset($name)) {
-            return;
-        }
-
-        if (!is_dir($approot = SYSROOT . '/applications/' . $name)) {
-            if (SYSROOT == LPDROOT) {
-                $approot = SYSROOT . '/application';
-            } else {
-                $approot = SYSROOT;
-            }
-        }
-
-        switch ($type) {
-            case 'theme':
-                if (file_exists($file = $approot . '/themes/' . $name . '/' . $name . '.php') ||
-                    file_exists($file = LPDROOT . '/themes/' . $name . '/' . $name . '.php')
-                ) {
-                    require_once $file;
-                }
-                break;
-            case 'module':
-                if (file_exists($file = $approot . '/modules/' . $name . '/' . $name . '.php') ||
-                    file_exists($file = LPDROOT . '/modules/' . $name . '/' . $name . '.php')
-                ) {
-                    require_once $file;
-                }
-                break;
-            case 'application':
-                if (file_exists($file = APPROOT . '/' . $name . '.php')) {
-                    require_once $file;
-                }
-                break;
-            default:
-                break;
-        }
+        Component\Application::autoload($class);
+        Component\Module::autoload($class);
+        Component\Theme::autoload($class);
     }
 
     /**
@@ -640,146 +586,6 @@ class Core
         }
 
         $this->router->setPageTitle($title);
-    }
-
-    /**
-     * Get a component build array
-     *
-     * A component is an important concept in Lapurd, it distinguishes
-     * different type of components.
-     *
-     *   [
-     *       'name' => '', // name of the component
-     *       'type' => '', // type of the component
-     *       'class' => '', // main class of the component
-     *       'include' => '', // place for component hooks
-     *       'filepath' => '', // file path to the component
-     *       'namespace' => '', // namespace of the component
-     *   ]
-     *
-     * @param string $type
-     *   The type of the component
-     * @param string|null $name
-     *   The name of the component
-     *
-     * @return Component
-     *   A component instance
-     *
-     * @throws \LogicException
-     * @throws \DomainException
-     * @throws \BadFunctionCallException
-     */
-    public static function getComponent($type, $name=null)
-    {
-        static $components;
-
-        switch ($type) {
-            case 'lapurd':
-                $refl = new \ReflectionClass(__NAMESPACE__ . '\\Component\\Lapurd');
-
-                $info = array(
-                    'name' => __NAMESPACE__,
-                    'type' => 'lapurd',
-                    'class' => __NAMESPACE__ . '\\Component\Lapurd',
-                    'include' => 'lapurd.inc.php',
-                    'filepath' => dirname($refl->getFileName()),
-                    'namespace' => __NAMESPACE__ . '\\Component\Lapurd',
-                );
-                break;
-            case 'theme':
-                if (is_null($name)) {
-                    $name = self::get()->getCurrentTheme();
-                }
-
-                $refl = new \ReflectionClass(__NAMESPACE__ . '\\Theme\\' . $name);
-
-                $info = array(
-                    'name' => $name,
-                    'type' => 'theme',
-                    'class' => __NAMESPACE__ . '\\Theme\\' . $name,
-                    'include' => 'theme.inc.php',
-                    'filepath' => dirname($refl->getFileName()),
-                    'namespace' => __NAMESPACE__ . '\\Theme\\' . $name,
-                );
-                break;
-            case 'module':
-                $refl = new \ReflectionClass(__NAMESPACE__ . '\\Module\\' . $name);
-
-                $info = array(
-                    'name' => $name,
-                    'type' => 'module',
-                    'class' => __NAMESPACE__ . '\\Module\\' . $name,
-                    'include' => 'module.inc.php',
-                    'filepath' => dirname($refl->getFileName()),
-                    'namespace' => __NAMESPACE__ . '\\Module\\' . $name,
-                );
-                break;
-            case 'application':
-                if (is_null($name)) {
-                    $name = self::get()->getCurrentApplication();
-                }
-
-                $refl = new \ReflectionClass(__NAMESPACE__ . '\\Application\\' . $name);
-
-                $info = array(
-                    'name' => $name,
-                    'type' => 'application',
-                    'class' => __NAMESPACE__ . '\\Application\\' . $name,
-                    'include' => 'application.inc.php',
-                    'filepath' => dirname($refl->getFileName()),
-                    'namespace' => __NAMESPACE__ . '\\Application\\' . $name,
-                );
-                break;
-            default:
-                throw new \DomainException("Unknown component type '$type'!");
-                break;
-        }
-
-        $namespace = $info['namespace'];
-
-        if (isset($components[$namespace])) {
-            return $components[$namespace];
-        }
-
-        if (!self::loadComponent($info)) {
-            throw new \LogicException("No component $type '$name' can be found!");
-        }
-
-        if (!is_callable($callback = $namespace . '\\info')) {
-            $info = array_merge((array) call_user_func($callback), $info);
-        }
-
-        $info = array_merge((array) call_user_func($callback), $info);
-
-        $component = new $info['class']($info);
-
-        $components[$namespace] = $component;
-
-        return $component;
-    }
-
-    /**
-     * Load a requested component
-     *
-     * @param array $component
-     *   An component build array
-     *
-     * @return bool
-     *   False if no such component is found
-     *
-     * @throws \DomainException
-     */
-    private static function loadComponent($component)
-    {
-        $file = $component['filepath'] . '/' . $component['include'];
-
-        if (file_exists($file)) {
-            require_once $file;
-
-            return true;
-        } else {
-            return false;
-        }
     }
 
     /**

@@ -11,6 +11,15 @@
 
 namespace Lapurd;
 
+interface ComponentInterface
+{
+    public static function get($name);
+
+    public static function info($name);
+
+    public static function autoload($name);
+}
+
 /**
  * Component class
  *
@@ -22,8 +31,50 @@ namespace Lapurd;
  *
  * @package Lapurd
  */
-abstract class Component
+abstract class Component implements ComponentInterface
 {
+    static $components;
+
+    public static function get($name)
+    {
+        // TODO can not be called from here
+
+        $info = static::info($name);
+
+        $namespace = $info['namespace'];
+
+        if (isset(self::$components[$namespace])) {
+            return self::$components[$namespace];
+        }
+
+        if (!empty($info['include']) && !self::load($info)) {
+            throw new \LogicException("No " . $info['type'] . " '" . $info['name'] . "' can be found!");
+        }
+
+        if (!is_callable($callback = $namespace . '\\info')) {
+            throw new \BadFunctionCallException("No 'info()' function is defined");
+        }
+
+        $info = array_merge((array) call_user_func($callback), $info);
+
+        $component = new $info['class']($info);
+
+        self::$components[$namespace] = $component;
+
+        return $component;
+    }
+
+    private static function load($info)
+    {
+        if (file_exists($file = $info['filepath'] . '/' . $info['include'])) {
+            require_once $file;
+
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     /**
      * The name of the component
      *
@@ -52,7 +103,7 @@ abstract class Component
      *
      * @throws \OutOfRangeException
      */
-    public function __construct(array $info)
+    protected function __construct($info)
     {
         $this->name = $info['name'];
         $this->info = $info;

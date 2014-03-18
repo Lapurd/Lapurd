@@ -45,7 +45,7 @@ class Region
 
         $view->addSchema(
             preg_replace('/[_]+/', '-', strtolower($this->name)),
-            Core::getComponent('theme')
+            Component\Theme::get()
         );
 
         return $view->theme($content);

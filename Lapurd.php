@@ -20,9 +20,30 @@ use Lapurd\Component;
  */
 final class Lapurd extends Component
 {
+    public static function get($name=null)
+    {
+        return parent::get($name);
+    }
+
+    public static function info($name=null)
+    {
+        $refl = new \ReflectionClass('Lapurd\\Component\\Lapurd');
+
+        return array(
+            'name' => 'Lapurd',
+            'type' => 'lapurd',
+            'class' => 'Lapurd\\Component\\Lapurd',
+            'include' => 'lapurd.inc.php',
+            'filepath' => dirname($refl->getFileName()),
+            'namespace' => 'Lapurd\\Component\\Lapurd',
+        );
+    }
+
     /**
      * Default handler for 'index'
      */
+    public static function autoload($class) {}
+
     public function sayHelloWorld()
     {
         echo "<h1>Hello World!</h1>";
