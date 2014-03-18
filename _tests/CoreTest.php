@@ -9,7 +9,7 @@
  * @package    Lapurd
  */
 
-namespace Lapurd;
+namespace Lapurd\Test;
 
 /**
  * Class CoreTest
