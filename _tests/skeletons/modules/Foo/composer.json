@@ -1,0 +1,13 @@
+{
+    "name": "Lapurd/Lapurd-Module-Foo",
+    "type": "project",
+    "require": {
+        "Lapurd/Lapurd": "dev-t"
+    },
+    "autoload": {
+        "psr-4": {
+            "Lapurd\\Module\\": ""
+        }
+    },
+    "description": "Lapurd Module Example"
+}

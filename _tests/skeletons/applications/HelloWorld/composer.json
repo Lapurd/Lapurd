@@ -1,0 +1,13 @@
+{
+    "name": "Lapurd/Application/HelloWorld",
+    "type": "project",
+    "require": {
+        "Lapurd/Lapurd": "dev-t"
+    },
+    "autoload": {
+        "psr-4": {
+            "Lapurd\\Application\\": ""
+        }
+    },
+    "description": "Lapurd Application Example"
+}
