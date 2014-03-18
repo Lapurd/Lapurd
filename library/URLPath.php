@@ -124,10 +124,19 @@ class URLPath
      *
      *       [
      *           'path' => '', // string
+     *           'menu' =>
+     *               [
+     *                   'type' => '', //string
+     *                   'name' => '', //string
+     *                   'weight' => '', //int
+     *               ]
      *           'weight' => '', // int
-     *           'redirect' => '', // string
-     *           'callback' => '', // callable
-     *           'arguments' => [], // array
+     *           'handler' =>
+     *               [
+     *                   'redirect' => '', // string
+     *                   'callback' => '', // callable
+     *                   'arguments' => [], // array
+     *               ]
      *           'page-title' => '', // string
      *       ]
      *
