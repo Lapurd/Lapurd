@@ -2,6 +2,7 @@ Lapurd
 ======
 
 [![Build Status](https://api.travis-ci.org/Lapurd/Lapurd.png)](https://travis-ci.org/Lapurd/Lapurd)
+[![Coverage Status](https://coveralls.io/repos/Lapurd/Lapurd/badge.png)](https://coveralls.io/r/Lapurd/Lapurd)
 
 Lapurd is a reverse spelling of 'Drupal'!
 

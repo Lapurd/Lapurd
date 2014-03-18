@@ -5,3 +5,10 @@ php:
 
 before_script:
     - sh -c "composer install --dev --prefer-source"
+
+script:
+    - mkdir -p build/logs
+    - phpunit --coverage-clover build/logs/clover.xml
+
+after_script:
+    - php vendor/bin/coveralls -v
