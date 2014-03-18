@@ -8,7 +8,12 @@
  * file that was distributed with this source code.
  */
 
-namespace Lapurd;
+namespace Lapurd\Component;
+
+use Lapurd\Core;
+use Lapurd\View;
+use Lapurd\Region;
+use Lapurd\Component;
 
 /**
  * Class of theme component

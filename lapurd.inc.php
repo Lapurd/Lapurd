@@ -9,7 +9,7 @@
  * @package    Lapurd
  */
 
-namespace Lapurd\Lapurd;
+namespace Lapurd\Component\Lapurd;
 
 use Lapurd\Core;
 use Lapurd\View;

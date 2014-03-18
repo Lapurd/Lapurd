@@ -54,7 +54,7 @@ class Core
     /**
      * The instance of 'Lapurd'
      *
-     * @var Lapurd
+     * @var Component\Lapurd
      */
     private $lapurd;
 
@@ -675,15 +675,15 @@ class Core
 
         switch ($type) {
             case 'lapurd':
-                $refl = new \ReflectionClass(__NAMESPACE__ . '\\Lapurd');
+                $refl = new \ReflectionClass(__NAMESPACE__ . '\\Component\\Lapurd');
 
                 $info = array(
                     'name' => __NAMESPACE__,
                     'type' => 'lapurd',
-                    'class' => __NAMESPACE__ . '\\Lapurd',
+                    'class' => __NAMESPACE__ . '\\Component\Lapurd',
                     'include' => 'lapurd.inc.php',
                     'filepath' => dirname($refl->getFileName()),
-                    'namespace' => __NAMESPACE__ . '\\Lapurd',
+                    'namespace' => __NAMESPACE__ . '\\Component\Lapurd',
                 );
                 break;
             case 'theme':
