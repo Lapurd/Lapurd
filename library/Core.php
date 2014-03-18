@@ -52,14 +52,14 @@ class Core
     /**
      * An array of 'Module' instances
      *
-     * @var Module[]
+     * @var Component\Module[]
      */
     private $modules = array();
 
     /**
      * The instance of the 'Application'
      *
-     * @var Application
+     * @var Component\Application
      */
     private $application;
 
@@ -197,7 +197,7 @@ class Core
     /**
      * Getter of property 'application'
      *
-     * @return Application
+     * @return Component\Application
      */
     public function getApplication()
     {
@@ -253,7 +253,7 @@ class Core
      * @param string $module
      *   The name of the module
      *
-     * @return Module|null
+     * @return Component\Module|null
      */
     public function getModule($module)
     {
@@ -278,7 +278,7 @@ class Core
     /**
      * Getter of property 'modules'
      *
-     * @return Module[]
+     * @return Component\Module[]
      *   An array of 'Module' instances
      */
     public function getModules()

@@ -9,7 +9,9 @@
  * @package    Lapurd
  */
 
-namespace Lapurd;
+namespace Lapurd\Component;
+
+use Lapurd\Component;
 
 /**
  * Module class

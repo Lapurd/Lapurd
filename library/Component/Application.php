@@ -9,9 +9,11 @@
  * @package    Lapurd
  */
 
-namespace Lapurd;
+namespace Lapurd\Component;
 
+use Lapurd\Core;
 use Lapurd\Setting;
+use Lapurd\Component;
 
 /**
  * Application class
