@@ -23,7 +23,7 @@ class Setting
      *
      * @var array
      */
-    private $settings;
+    private static $settings = array();
 
     /**
      * The instance is constructed by loading 'settings.php'
@@ -44,7 +44,42 @@ class Setting
             throw new \LogicException("No application has been configured!");
         }
 
-        $this->settings = $settings;
+        self::$settings = $settings;
+    }
+
+    /**
+     * Query a path from the registry
+     *
+     * @param string $name
+     *   A URL path
+     *
+     * @return array|null
+     *   An array of the path information
+     */
+    public static function getSetting($name)
+    {
+        if (isset(self::$settings[$name])) {
+            return self::$settings[$name];
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Add a path into the registry
+     *
+     * @param string $name
+     *   A URL path
+     * @param array $value
+     *   An array of the path information
+     *
+     *       [
+     *           'callback' => '',
+     *       ]
+     */
+    public static function addSetting($name, $value)
+    {
+        self::$settings[$name] = $value;
     }
 
     /**
@@ -58,8 +93,8 @@ class Setting
      */
     public function read($name)
     {
-        if (isset($this->settings[$name])) {
-            return $this->settings[$name];
+        if (isset(self::$settings[$name])) {
+            return self::$settings[$name];
         } else {
             return null;
         }
@@ -75,6 +110,6 @@ class Setting
      */
     public function write($name, $value)
     {
-        $this->settings[$name] = $value;
+        self::$settings[$name] = $value;
     }
 }

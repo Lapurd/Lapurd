@@ -11,6 +11,8 @@
 
 namespace Lapurd;
 
+use Lapurd\Setting;
+
 /**
  * Application class
  *
@@ -33,8 +35,8 @@ abstract class Application extends Component
     {
         parent::__construct($info);
 
-        if (is_callable($callback = Core::getComponent('application', Core::get()->getCurrentApplication())['namespace'] . '\\modules')) {
-            Core::get()->setSetting('modules', call_user_func($callback));
+        if (is_callable($callback = Core::getComponent('application', Setting::getSetting('application'))['namespace'] . '\\modules')) {
+            Setting::addSetting('modules', call_user_func($callback));
         }
     }
 }
