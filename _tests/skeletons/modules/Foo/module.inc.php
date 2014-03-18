@@ -12,5 +12,9 @@ function paths()
             'callback' => 'say',
             'arguments' => array(1),
         ),
+        'foo/%' => array(
+            'callback' => 'say',
+            'arguments' => array(1),
+        ),
     );
 }
