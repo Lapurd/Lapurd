@@ -11,6 +11,7 @@
 
 namespace Lapurd\Component;
 
+use Lapurd\Core;
 use Lapurd\Component;
 
 /**
@@ -44,7 +45,7 @@ abstract class Module extends Component
 
         $name = substr($class, strlen($prefix));
 
-        $approot = Application::info()['filepath'];
+        $approot = Core::get()->getApplication()->filepath;
 
         if (is_dir($path = $approot . '/modules/' . $name) ||
             is_dir($path = \Lapurd\LPDROOT . '/modules/' . $name)

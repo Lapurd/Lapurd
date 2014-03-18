@@ -25,25 +25,8 @@ use Lapurd\Component;
  */
 abstract class Application extends Component
 {
-    public static function get($name=null)
+    public static function info($name)
     {
-        if (is_null($name)) {
-            if (!$name = Core::get()->getSetting('application')) {
-                throw new \LogicException('No application is installed!');
-            }
-        }
-
-        return parent::get($name);
-    }
-
-    public static function info($name=null)
-    {
-        if (is_null($name)) {
-            if (!$name = Core::get()->getSetting('application')) {
-                throw new \LogicException('No application is installed!');
-            }
-        }
-
         $refl = new \ReflectionClass('Lapurd\\Application\\' . $name);
 
         return array(

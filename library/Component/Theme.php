@@ -22,21 +22,8 @@ use Lapurd\Component;
  */
 abstract class Theme extends Component
 {
-    public static function get($name=null)
+    public static function info($name)
     {
-        if (is_null($name)) {
-            $name = Core::get()->getCurrentTheme();
-        }
-
-        return parent::get($name);
-    }
-
-    public static function info($name=null)
-    {
-        if (is_null($name)) {
-            $name = Core::get()->getCurrentTheme();
-        }
-
         $refl = new \ReflectionClass('Lapurd\\Theme\\' . $name);
 
         return array(
@@ -59,7 +46,7 @@ abstract class Theme extends Component
 
         $name = substr($class, strlen($prefix));
 
-        $approot = Application::info()['filepath'];
+        $approot = Core::get()->getApplication()->filepath;
 
         if (is_dir($path = $approot . '/themes/' . $name) ||
             is_dir($path = \Lapurd\LPDROOT . '/themes/' . $name)

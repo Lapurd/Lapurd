@@ -167,10 +167,10 @@ class View
         Core::invoke('view_' . str_replace('-', '_', $this->name) . '_render', $this->provider, array($this));
 
         // Give the current theme a chance to modify the view.
-        Core::invoke('view_' . str_replace('-', '_', $this->name) . '_render', Component\Theme::get(), array($this));
+        Core::invoke('view_' . str_replace('-', '_', $this->name) . '_render', Core::get()->getTheme(), array($this));
 
         // The application should be able to modify the view as well.
-        Core::invoke('view_' . str_replace('-', '_', $this->name) . '_render', Component\Application::get(), array($this));
+        Core::invoke('view_' . str_replace('-', '_', $this->name) . '_render', Core::get()->getApplication(), array($this));
 
         // If the name schema used by the template is not same with the name
         // of the view, run all the hooks on the new name schema.
@@ -179,16 +179,16 @@ class View
             Core::invoke('view_' . str_replace('-', '_', $candidate['schema']) . '_render', $candidate['provider'], array($this));
 
             // Give the current theme a chance to modify for the new name schema.
-            if (Component\Theme::get()->namespace != $candidate['provider']->namespace) {
-                Core::invoke('view_' . str_replace('-', '_', $candidate['schema']) . '_render', Component\Theme::get(), array($this));
+            if (Core::get()->getTheme()->namespace != $candidate['provider']->namespace) {
+                Core::invoke('view_' . str_replace('-', '_', $candidate['schema']) . '_render', Core::get()->getTheme(), array($this));
             } else {
                 throw new \LogicException('Themes are not supposed to add name schemas!');
             }
 
             // If the new name schema is not provided by the application, then the
             // application should be able to modify the view as well.
-            if (Component\Application::get()->namespace != $candidate['provider']->namespace) {
-                Core::invoke('view_' . str_replace('-', '_', $candidate['schema']) . '_render', Component\Application::get(), array($this));
+            if (Core::get()->getApplication()->namespace != $candidate['provider']->namespace) {
+                Core::invoke('view_' . str_replace('-', '_', $candidate['schema']) . '_render', Core::get()->getApplication(), array($this));
             }
         }
 
@@ -308,11 +308,11 @@ class View
     {
         $providers = array();
         // 'views' directory of the application
-        $providers[] = Component\Application::get();
+        $providers[] = Core::get()->getApplication();
         // 'views' directory of the current theme
-        $providers[] = Component\Theme::get();
+        $providers[] = Core::get()->getTheme();
         // 'views' directory of the view's provider
-        if ($provider->namespace != Component\Application::get()->namespace) {
+        if ($provider->namespace != Core::get()->getApplication()->namespace) {
             $providers[] = $provider;
         }
 

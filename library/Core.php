@@ -106,7 +106,7 @@ class Core
         /**
          * Init Application
          */
-        $this->application = Component\Application::get();
+        $this->application = Component\Application::get($this->getSetting('application'));
 
         /**
          * Init Modules
@@ -116,14 +116,14 @@ class Core
         };
 
         /**
-         * Init Lapurd
+         * Init Lapurd Component
          */
         $this->lapurd = Component\Lapurd::get();
 
         /**
          * Init Theme
          */
-        $this->theme = Component\Theme::get();
+        $this->theme = Component\Theme::get($this->getSetting('theme'));
     }
 
     /**
@@ -245,7 +245,7 @@ class Core
 
         if (!isset($hookers[$hook])) {
             $hookers[$hook] = array();
-            if (self::hook($hook, $component = Component\Lapurd::get(), $func)) {
+            if (self::hook($hook, $component = self::get()->getLapurd(), $func)) {
                 $hookers[$hook][] = array(
                     'hook' => $hook,
                     'callback' => $func,
@@ -253,7 +253,7 @@ class Core
                 );
             }
             foreach (self::get()->getEnabledModules() as $module) {
-                if (self::hook($hook, $component = Component\Module::get($module), $func)) {
+                if (self::hook($hook, $component = self::get()->getModule($module), $func)) {
                     $hookers[$hook][] = array(
                         'hook' => $hook,
                         'callback' => $func,
@@ -261,7 +261,7 @@ class Core
                     );
                 }
             }
-            if (self::hook($hook, $component = Component\Application::get(), $func)) {
+            if (self::hook($hook, $component = self::get()->getApplication(), $func)) {
                 $hookers[$hook][] = array(
                     'hook' => $hook,
                     'callback' => $func,
